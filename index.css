@@ -1,0 +1,196 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700&display=swap');
+
+:root { /* CSS Variablen für Farben */
+  --background-color: #1e1e1e;
+  --background-color-body: #3a3a3a;
+  --text-color: #f2f2f2;
+  --hover-color: #808080;
+  --kw-color: lightslategray;
+  --sa-color: steelblue;
+  --so-color: #e04a4a;
+  --boxshadow-color: rgba(0, 0, 0, 0.486);
+  }
+
+*{
+  margin: 0; 
+}
+
+body { /* allgemeine Stile für den Body */
+  background-color: var(--background-color-body);
+  font-family: 'Titillium Web', sans-serif;
+  margin: 0;
+  color: var(--text-color);
+  min-width: 1200px;
+  overflow-x: auto ;
+}
+
+#header {
+  flex-direction: row;
+  text-align: center;
+  text-shadow: 0px 0px 12px black;
+  text-transform: uppercase;
+  background-color: var(--background-color);
+  padding: 40px;
+}
+
+#F1logohead { width: 200px; }
+
+h1 {  font-size: 3.5rem; }
+h2 { font-size: 2.5rem; }
+h3 { font-size: 1.5rem; }
+
+main { /* Hauptbereich der Seite */
+  display: grid;
+  grid-template-columns: 1fr 1.75fr 1fr;
+  grid-template-areas:
+  "historie kalender info";
+  gap: 1.5%;
+  padding: 2% 3%;
+  border-radius: 0 0 10px 10px;
+  background-color: var(--background-color);
+  box-shadow: 1px 10px 10px var(--boxshadow-color);
+  min-width: 35%;
+  overflow-x: auto ;
+}
+
+#kalenderblatt {
+  grid-area: kalender;
+  min-width: 600px;
+}
+
+.nav-image{
+  width: 5rem;
+  height: 3.75rem;
+}
+
+.nav-arrowback {
+  transform: scaleX(-1);
+}
+
+th.kalenderblatthead { /* Kopfzeile des Kalenders */
+  background-color: var(--background-color);
+  border-radius: 15px 0;
+  text-transform: uppercase;
+}
+
+.month-navigation { /* Navigationselemente für den Monat */
+  display: flex; /* Flexbox für die Navigation */
+  justify-content: space-between; /* Platz zwischen den Elementen */
+  align-items: center; /* Zentriert Element vertikal */
+}
+
+.nav-arrowback, .nav-arrowf { /* Pfeile für die Navigation */
+  padding: 0 25px;
+  display: flex;
+}
+
+.nav-arrowf:hover {
+  transform: scale(1.25);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.nav-arrowback:hover {
+  transform: scaleX(-1) scale(1.25);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.month-title:hover {
+  transform: scale(1.1);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+#kalenderblatt table { /* Kalender Tabelle */
+  text-align: center;
+  box-shadow: 0 0 10px var(--boxshadow-color);
+  table-layout: fixed; /* feste Breite für die Zellen */;
+  width: 100%;
+  background-color: var(--background-color-body);
+  border: rgba(0, 0, 0, 0.719) 2px solid;
+  border-radius: 50px 0;
+  border-spacing: 5px;
+  padding: 2%;
+  font-size: 1.4rem;
+  user-select: none;
+}
+
+.kalendertage td { /* Tabellenzellen im Kalender */
+  background-color: var(--background-color);
+  border-radius: 10px 0;
+  padding: 1.4%;
+}
+
+#kalenderblatt {
+  .heute { /* markiert den aktuellen Tag */
+    color: black;
+    background-color: lightgray;
+    font-weight: bold;
+  }
+}
+
+tr.wochentage th { /* Wochentage im Kalender */
+  background-color:var(--kw-color);
+  font-weight: bold;
+  padding: 1.5%;
+  border-radius: 10px 0;
+}
+
+.kalendertage1 .mo {
+  opacity: 0.35;
+}
+
+#kalenderblatt .kalendertage5 .sa, .kalendertage5 .so, .kalendertage5 .fr {
+  opacity: 0.35
+}
+
+#kalenderblatt tr.wochentage th:hover, 
+td:hover {/* Hover-Effekt für die Zellen */
+  background-color: var(--hover-color);
+  transform: scale(1.15);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+#kalenderblatt .sa { /* Hintergrundfarbe für Samstag */
+  background-color: var(--sa-color);
+}
+
+#kalenderblatt .so { /* Hintergrundfarbe für Sonntag */
+  background-color: var(--so-color);
+}
+
+#kalenderblatt .kw {  /* Hintergrundfarbe für die KW */
+  background-color: var(--kw-color);
+  font-weight: bold;
+}
+
+#historie, #infotext {
+  background-color: var(--background-color-body);
+  border-radius: 3px;
+  box-shadow: 0 0 10px var(--boxshadow-color);
+  overflow: auto;
+  line-height: 1.5;
+  scrollbar-width: thin;
+  scrollbar-color: var(--hover-color) var(--background-color);
+  padding: 4.5%;
+}
+
+#historie {
+  grid-area: historie;
+  max-height: 430px;
+}
+
+#infotext {
+  grid-area: info;
+  max-height: 200px;
+}
+
+#footer {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  text-align: center;
+  padding: 20px;
+}

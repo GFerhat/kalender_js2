@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8"> <!-- ermöglicht deutsche Zeichen z.B ä,ö,ü usw.-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Passt die Darstellung aufs jeweilige device an-->
+    <title>Kalender vom 14.07.2025</title>
+    <link rel="stylesheet" href="index.css"> <!--verlinkt die CSS Datei-->
+
+</head>
+
+<body>
+    <header id="header">
+        <img id="F1logohead" src=".\assets\f1logo.png" alt="F1Logo">
+        <h1>Kalenderblatt <span id="kalenderblattH1"></span></h1>
+    </header>
+    <main><!--Hauptinhalt der Seite-->
+        <div id="kalenderblatt">
+            <table>
+                <thead>
+                    <tr><!-- tr fügt eine Zeile hinzu-->
+                        <th class="kalenderblatthead" colspan="8">
+                            <div class="month-navigation">
+                                <span class="nav-arrowback">
+                                    <img class="nav-image" src="./assets/raceflag3.png" alt="backward-nav">
+                                </span>
+                                <span class="month-title">
+                                    <h2><span id="kalenderblattHeadJs">Monat Jahr</span></h2>
+                                </span>
+                                <span class="nav-arrowf">
+                                    <img class="nav-image" src="./assets/raceflag3.png" alt="forward-nav">
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                    <tr class="wochentage">
+                        <th class="kw">Kw</th><!--th, Header für Tabelle-->
+                        <th class="mo">Mo</th>
+                        <th class="di">Di</th>
+                        <th class="mi">Mi</th>
+                        <th class="do">Do</th>
+                        <th class="fr">Fr</th>
+                        <th class="sa">Sa</th>
+                        <th class="so">So</th>
+                    </tr>
+                </thead>
+                <tbody class="kalendertage"><!--greift auf den tatsächlichen Tabellleninhalt zu -->
+                    <tr class="kalendertage1">
+                        <td class="kw">27</td><!-- td fügt der Zeile auf der wir uns befinden eine Zelle hinzu-->
+                        <td class="mo">30</td>
+                        <td class="di">1</td>
+                        <td class="mi">2</td>
+                        <td class="do">3</td>
+                        <td class="fr">4</td>
+                        <td class="sa">5</td>
+                        <td class="so">6</td>
+                    </tr>
+                    <tr class="kalendertage2">
+                        <td class="kw">28</td>
+                        <td class="mo">7</td>
+                        <td class="di">8</td>
+                        <td class="mi">9</td>
+                        <td class="do">10</td>
+                        <td class="fr">11</td>
+                        <td class="sa">12</td>
+                        <td class="so">13</td>
+                    </tr>
+                    <tr class="kalendertage3">
+                        <td class="kw">29</td>
+                        <td class="heute">14</td>
+                        <td class="di">15</td>
+                        <td class="mi">16</td>
+                        <td class="do">17</td>
+                        <td class="fr">18</td>
+                        <td class="sa">19</td>
+                        <td class="so">20</td>
+                    </tr>
+                    <tr class="kalendertage4">
+                        <td class="kw">30</td>
+                        <td class="mo">21</td>
+                        <td class="di">22</td>
+                        <td class="mi">23</td>
+                        <td class="do">24</td>
+                        <td class="fr">25</td>
+                        <td class="sa">26</td>
+                        <td class="so">27</td>
+                    </tr>
+                    <tr class="kalendertage5">
+                        <td class="kw">31</td>
+                        <td class="mo">28</td>
+                        <td class="di">29</td>
+                        <td class="mi">30</td>
+                        <td class="do">31</td>
+                        <td class="fr">1</td>
+                        <td class="sa">2</td>
+                        <td class="so">3</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="historie">
+            <h3>Historische F1 Ereignisse im <span id="datumHistorie"></span></h3>
+            <!--fügt klassisch Text hinzu-->
+            <ul><!-- Erstellt unsere Liste für historische Ereignisse -->
+                <li><!--Erstellt unsere Ereignislistenpunkte-->
+                    1951: Ferrari feierte mit José Froilán González
+                    am Steuer den ersten Formel-1-Sieg in einem
+                    Ferrari-Chassis beim British Grand Prix in Silverstone.
+                </li>
+                <li>
+                    1973: Beim British Grand Prix
+                    kam es am „Woodcote“-Kurvenbereich zu einem
+                    großen Unfall, ausgelöst von Jody Scheckter.
+                    Highlight: Sieg durch Peter Revson in einem McLaren
+                </li>
+                <li>
+                    1979:
+                    British Grand Prix:
+                    Clay Regazzoni gewann für Williams-Ford
+                    - es war William's erster Formel-1-Sieg
+                    und Regazzonis letzter.
+                </li>
+                <li>
+                    1991:
+                    British Grand Prix:
+                    Nigel Mansell dominierte und feierte einen
+                    beeindruckenden Sieg - das Rennen ist als eines der
+                    erinnerungswürdigsten in der
+                    F1-Historie über Silverstone bekannt.
+                </li>
+                <li>
+                    2019:
+                    Beim British Grand Prix in Silverstone
+                    siegte Lewis Hamilton souverän (sechster Sieg dort),
+                    mit Valtteri Bottas (2.) und Charles Leclerc (3.).
+                    Zusätzlich: Hamilton fuhr die schnellste Rennrunde.
+                </li>
+            </ul>
+        </div>
+        <div id="infotext">
+            <h3>Good to know</h3>
+            <p>
+                Der <span id="datumInfo"> </span> ist ein <span id="wochentagInfo1"></span>
+                und zwar der <span id="zahlWochentag">2</span>
+                <span id="wochentagInfo2"></span>im Monat
+                <span id="monatNameJs"></span> des Jahres 2025. Dieser Monat hat
+                <span id="anzahlTage"></span><span id="anzahlMonatTage">31</span> Tage.
+                Der <span id="datumInfo1"></span>
+                ist <span id="obFeiertag"></span>gesetzlicher Feiertag in Hessen. Der nächste gesetzliche
+                Feiertag ist der <span id="nextGesetzlicherFeiertag"></span>03.10.2025. (Tag der Deutschen Einheit).
+            </p>
+        </div>
+    </main>
+    <footer id="footer">
+        <p>© Alle Rechte vorbehalten.</p>
+        <p>Erstellt von Ferhat Gümüş</p>
+    </footer>
+    <script src="index.js"></script>
+</body>
+
+</html>
+<!--Ende -->
