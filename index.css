@@ -124,7 +124,8 @@ th.kalenderblatthead { /* Kopfzeile des Kalenders */
 }
 
 #kalenderblatt {
-  .heute { /* markiert den aktuellen Tag */
+  .kalendertage2 .mo {
+    /* markiert den aktuellen Tag */
     color: black;
     background-color: lightgray;
     font-weight: bold;
