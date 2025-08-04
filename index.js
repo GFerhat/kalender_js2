@@ -13,6 +13,24 @@ let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0);
 let heutigesDatumDeutsch = heute.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
 document.title = "Kalenderblatt " + heutigesDatumDeutsch;
 
+//gibt der Variable monatName immer den Aktuellen monat als String.
+const monatArray = [
+  "Januar",
+  "Februar",
+  "März",
+  "April",
+  "Mai",
+  "Juni",
+  "Juli",
+  "August",
+  "September",
+  "Oktober",
+  "November",
+  "Dezember",
+];
+let monatNum = heute.getMonth();
+let monatName = monatArray[monatNum];
+
 const wochentagArray = [
   "Sonntag",
   "Montag",
@@ -73,24 +91,6 @@ let tageBisMontag = calcTageVormonat(wochentagNum);
 calcTageVormonat(tageBisMontag);
 console.log("minus", tageBisMontag, "Tage sind inside Month");
 
-//gibt der Variable monatName immer den Aktuellen monat als String.
-const monatArray = [
-  "Januar",
-  "Februar",
-  "März",
-  "April",
-  "Mai",
-  "Juni",
-  "Juli",
-  "August",
-  "September",
-  "Oktober",
-  "November",
-  "Dezember",
-];
-let monatNum = heute.getMonth();
-let monatName = monatArray[monatNum];
-
 if (monat < 10) {
   monat = "0" + (monat + 1); //Monat Januar wäre 0, will ich nicht also +1
 }
@@ -105,7 +105,7 @@ function getMonatwoche(tag) {
   } else if (tag < 21) {
     return 3;
   } else if (tag < 28) {
-    return 4;  
+    return 4;
   }
   return 5;
 }
@@ -129,22 +129,6 @@ function getOsterSonntag() {
   let o = (h + l - 7 * m + 114) % 31;
   return new Date(jahr, n - 1, o + 1); //n ist der Monat o ist der Tag
 }
-
-//überschreibt ins HTML Dokument
-//Kalenderblatt
-document.getElementById("kalenderblattHeadJs").innerHTML =
-  monatName + " " + jahr;
-document.getElementById("kalenderblattH1").innerHTML = heutigesDatumDeutsch;
-//Historie
-document.getElementById("datumHistorie").innerHTML = monatName;
-//Infotext
-document.getElementById("datumInfo").innerHTML = heutigesDatumDeutsch;
-document.getElementById("datumInfo1").innerHTML = heutigesDatumDeutsch;
-document.getElementById("wochentagInfo1").innerHTML = wochentag;
-document.getElementById("wochentagInfo2").innerHTML = wochentag + " ";
-document.getElementById("zahlWochentag").innerHTML = getMonatwoche(heute.getDate()) + "te";
-document.getElementById("monatNameJs").innerHTML = " " + monatName;
-document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats.getDate();
 
 let osternDate = getOsterSonntag();
 let ostern = osternDate.toLocaleDateString("de-DE", options);
@@ -205,4 +189,81 @@ if (feiertagArray.includes(heutigesDatumDeutsch)) {
   document.getElementById("obFeiertag").innerHTML = "kein ";
 }
 
-const kalenderblatt = document.getElementById("kalenderblatt");
+
+//überschreibt ins HTML Dokument
+//Kalenderblatt
+document.getElementById("kalenderblattHeadJs").innerHTML =
+  monatName + " " + jahr;
+document.getElementById("kalenderblattH1").innerHTML = heutigesDatumDeutsch;
+//Historie
+document.getElementById("datumHistorie").innerHTML = monatName;
+//Infotext
+document.getElementById("datumInfo").innerHTML = heutigesDatumDeutsch;
+document.getElementById("datumInfo1").innerHTML = heutigesDatumDeutsch;
+document.getElementById("wochentagInfo1").innerHTML = wochentag;
+document.getElementById("wochentagInfo2").innerHTML = wochentag + " ";
+document.getElementById("zahlWochentag").innerHTML = getMonatwoche(heute.getDate()) + "te";
+document.getElementById("monatNameJs").innerHTML = " " + monatName;
+document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats.getDate();
+
+
+function generiereKalenderblatt() {
+  const kalenderContainer = document.getElementById("kalendertage");
+  // Anzahl der Tage im aktuellen Monat
+  const tageImMonat = tageDesMonats.getDate();
+
+  const tageDesVormonats = dayofPreviousMonthList.length;
+  console.log('Tage des Vormonat:' + tageDesVormonats);
+  const tageInsgesamt = tageImMonat + tageDesVormonats;
+  console.log("Tage insgesamt " + tageInsgesamt)
+  const wochenZahl = Math.ceil(tageInsgesamt / 7);
+  console.log('Wochen Zahl: ' + wochenZahl);
+  const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
+  console.log(tageVomFolgemonat);
+    // Vormonat-Tage rückwärts sortieren
+  const tageVormonat = [...dayofPreviousMonthList].reverse();
+
+  let tagZaehler = 1;
+  let folgeTagZaehler = 1;
+
+  for (let woche = 0; woche < wochenZahl; woche++) {
+    const tr = document.createElement("tr");
+    tr.classList.add("kalendertage");
+
+    // KW-Spalte (optional)
+    const kwTd = document.createElement("td");
+    kwTd.classList.add("kw");
+    kwTd.textContent = "KW"; // Hier kannst du später echte KW berechnen
+    tr.appendChild(kwTd);
+
+    for (let tagDerWoche = 1; tagDerWoche <= 7; tagDerWoche++) {
+      const td = document.createElement("td");
+      // Samstag/Sonntag Klassen
+      if (tagDerWoche === 6) td.classList.add("sa");
+      if (tagDerWoche === 7) td.classList.add("so");
+
+      // Vormonat
+      if (woche === 0 && tageVormonat.length > 0) {
+        td.textContent = tageVormonat.shift();
+        td.classList.add("kalendertage1");
+      } else if (tagZaehler <= tageImMonat) {
+        // Aktueller Monat
+        td.textContent = tagZaehler;
+        if (tagZaehler === heute.getDate()) {
+          td.classList.add("heute"); // Heute hervorheben
+        }
+        tagZaehler++;
+      } else {
+        // Folgemonat
+        td.textContent = folgeTagZaehler;
+        td.classList.add("kalendertage5");
+        folgeTagZaehler++;
+      }
+      tr.appendChild(td);
+    }
+    kalenderContainer.appendChild(tr);
+  }
+}
+
+generiereKalenderblatt();
+

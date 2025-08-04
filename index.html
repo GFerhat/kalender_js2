@@ -17,7 +17,7 @@
     </header>
     <main><!--Hauptinhalt der Seite-->
         <div id="kalenderblatt">
-            <table>
+            <table id="kalenderblattTabelle">
                 <thead>
                     <tr><!-- tr fügt eine Zeile hinzu-->
                         <th class="kalenderblatthead" colspan="8">
@@ -45,9 +45,11 @@
                         <th class="so">So</th>
                     </tr>
                 </thead>
-                <tbody class="kalendertage"><!--greift auf den tatsächlichen Tabellleninhalt zu -->
-                    <tr class="kalendertage1">
-                        <td class="kw">27</td><!-- td fügt der Zeile auf der wir uns befinden eine Zelle hinzu-->
+                <tbody id="kalendertage">
+                    
+                    <!--greift auf den tatsächlichen Tabellleninhalt zu -->
+                    <!-- <tr class="kalendertage1">
+                        <td class="kw">27</td>
                         <td class="mo">30</td>
                         <td class="di">1</td>
                         <td class="mi">2</td>
@@ -95,7 +97,7 @@
                         <td class="fr">1</td>
                         <td class="sa">2</td>
                         <td class="so">3</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>

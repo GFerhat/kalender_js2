@@ -117,14 +117,14 @@ th.kalenderblatthead { /* Kopfzeile des Kalenders */
   user-select: none;
 }
 
-.kalendertage td { /* Tabellenzellen im Kalender */
+#kalendertage td { /* Tabellenzellen im Kalender */
   background-color: var(--background-color);
   border-radius: 10px 0;
   padding: 1.4%;
 }
 
 #kalenderblatt {
-  .kalendertage2 .mo {
+  .heute {
     /* markiert den aktuellen Tag */
     color: black;
     background-color: lightgray;
