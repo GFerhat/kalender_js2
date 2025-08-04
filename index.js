@@ -9,7 +9,7 @@ let heute = new Date(); //gibt mir exakt das Aktuelle Datum mit Zeit und Zeitzon
 let tag = heute.getDate(); //Tag
 let monat = heute.getMonth(); //Monat
 let jahr = heute.getFullYear(); //Jahr
-let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0);
+let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0).getDate();
 let heutigesDatumDeutsch = heute.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
 document.title = "Kalenderblatt " + heutigesDatumDeutsch;
 
@@ -189,7 +189,6 @@ if (feiertagArray.includes(heutigesDatumDeutsch)) {
   document.getElementById("obFeiertag").innerHTML = "kein ";
 }
 
-
 //überschreibt ins HTML Dokument
 //Kalenderblatt
 document.getElementById("kalenderblattHeadJs").innerHTML =
@@ -204,66 +203,32 @@ document.getElementById("wochentagInfo1").innerHTML = wochentag;
 document.getElementById("wochentagInfo2").innerHTML = wochentag + " ";
 document.getElementById("zahlWochentag").innerHTML = getMonatwoche(heute.getDate()) + "te";
 document.getElementById("monatNameJs").innerHTML = " " + monatName;
-document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats.getDate();
+document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
 
 
-function generiereKalenderblatt() {
+function generiereKalenderblatt(year, month) {
   const kalenderContainer = document.getElementById("kalendertage");
   // Anzahl der Tage im aktuellen Monat
-  const tageImMonat = tageDesMonats.getDate();
-
-  const tageDesVormonats = dayofPreviousMonthList.length;
-  console.log('Tage des Vormonat:' + tageDesVormonats);
-  const tageInsgesamt = tageImMonat + tageDesVormonats;
-  console.log("Tage insgesamt " + tageInsgesamt)
+  const tageImMonat = new Date(year, month + 1, 0);
+  const tageImVormonat = new Date(year, month, 0);
+  const tageInsgesamt = tageImMonat + tageImVormonat;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
-  console.log('Wochen Zahl: ' + wochenZahl);
   const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
-  console.log(tageVomFolgemonat);
-    // Vormonat-Tage rückwärts sortieren
-  const tageVormonat = [...dayofPreviousMonthList].reverse();
-
-  let tagZaehler = 1;
-  let folgeTagZaehler = 1;
-
-  for (let woche = 0; woche < wochenZahl; woche++) {
-    const tr = document.createElement("tr");
-    tr.classList.add("kalendertage");
-
-    // KW-Spalte (optional)
-    const kwTd = document.createElement("td");
-    kwTd.classList.add("kw");
-    kwTd.textContent = "KW"; // Hier kannst du später echte KW berechnen
-    tr.appendChild(kwTd);
-
-    for (let tagDerWoche = 1; tagDerWoche <= 7; tagDerWoche++) {
-      const td = document.createElement("td");
-      // Samstag/Sonntag Klassen
-      if (tagDerWoche === 6) td.classList.add("sa");
-      if (tagDerWoche === 7) td.classList.add("so");
-
-      // Vormonat
-      if (woche === 0 && tageVormonat.length > 0) {
-        td.textContent = tageVormonat.shift();
-        td.classList.add("kalendertage1");
-      } else if (tagZaehler <= tageImMonat) {
-        // Aktueller Monat
-        td.textContent = tagZaehler;
-        if (tagZaehler === heute.getDate()) {
-          td.classList.add("heute"); // Heute hervorheben
-        }
-        tagZaehler++;
-      } else {
-        // Folgemonat
-        td.textContent = folgeTagZaehler;
-        td.classList.add("kalendertage5");
-        folgeTagZaehler++;
-      }
-      tr.appendChild(td);
+console.log("test")
+  for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
+    const tableRow = document.createElement("tr");
+    for (tageZaehler = 0;tageZaehler < 8; tageZaehler++) {
+      const tableCell = document.createElement("td");
+      if (tageZaehler==0) tableCell.className="kw";
+      if (tageZaehler==6) tableCell.className="sa";
+      if (tageZaehler==7) tableCell.className="so";
+      tableCell.innerText = tageZaehler + 7 * wochenZaehler-tageImVormonat;
+      tableRow.appendChild(tableCell);
     }
-    kalenderContainer.appendChild(tr);
+    kalenderContainer.appendChild(tableRow);
   }
+
 }
 
-generiereKalenderblatt();
+generiereKalenderblatt(2025,7);
 

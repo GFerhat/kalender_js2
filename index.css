@@ -123,13 +123,11 @@ th.kalenderblatthead { /* Kopfzeile des Kalenders */
   padding: 1.4%;
 }
 
-#kalenderblatt {
-  .heute {
+#kalenderblatt .heute {
     /* markiert den aktuellen Tag */
     color: black;
     background-color: lightgray;
     font-weight: bold;
-  }
 }
 
 tr.wochentage th { /* Wochentage im Kalender */
