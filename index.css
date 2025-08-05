@@ -141,7 +141,7 @@ tr.wochentage th { /* Wochentage im Kalender */
   opacity: 0.35;
 }
 
-#kalenderblatt .kalendertage5 .sa, .kalendertage5 .so, .kalendertage5 .fr {
+#kalenderblatt .monatPassiv {
   opacity: 0.35
 }
 
