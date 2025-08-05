@@ -64,11 +64,10 @@ if (firstOfTheMonth.getDay() != 1) {
     dayofPreviousMonthList.push(
       iteratorDay.toLocaleDateString("de-DE", options)
     );
-    iteratorDay = new Date(
-      iteratorDay.getFullYear(),
+    iteratorDay = new Date
+    ( iteratorDay.getFullYear(),
       iteratorDay.getMonth(),
-      iteratorDay.getDate() - 1
-    );
+      iteratorDay.getDate() - 1);
     if (whileBreak > 7) break;
   }
 }
@@ -209,27 +208,40 @@ document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
 function generiereKalenderblatt(year, month) {
   const kalenderContainer = document.getElementById("kalendertage");
   // Anzahl der Tage im aktuellen Monat
-  const tageImMonat = new Date(year, month + 1, 0);
-  const tageImVormonat = new Date(year, month, 0);
+  const tageImMonat = tageDesMonats;
+  const tageImVormonat = dayofPreviousMonthList.length;
   const tageInsgesamt = tageImMonat + tageImVormonat;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
   const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
-console.log("test")
+  console.log(tageInsgesamt);
+  console.log("test");
+  let tageZelle=0;
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
-    tr.classList.add("kalendertage");
-    for (tageZaehler = 0;tageZaehler < 8; tageZaehler++) {
+    tableRow.classList.add("kalendertage");
+
+    // //KW um erste spalte zu füllen (kw rechner funktion sollte codiert werden)
+    const kalenderwocheTd = document.createElement("td");
+    kalenderwocheTd.classList.add("kw");
+    kalenderwocheTd.textContent= "test";
+    tableRow.appendChild(kalenderwocheTd);
+    
+    
+    for (let tageZaehler = 1;tageZaehler <=7; tageZaehler++) {
       const tableCell = document.createElement("td");
-      if (tageZaehler==0) tableCell.className="kw";
       if (tageZaehler==6) tableCell.className="sa";
       if (tageZaehler==7) tableCell.className="so";
-      tableCell.innerText = tageZaehler + 7 * wochenZaehler-tageImVormonat;
+      tageZelle++;
+      tableCell.innerText = tageZelle;
       tableRow.appendChild(tableCell);
+      if (tageZelle==tageDesMonats) {
+      tageZelle=0;
+      }
     }
     kalenderContainer.appendChild(tableRow);
   }
 
 }
 
-generiereKalenderblatt(2025,7);
+generiereKalenderblatt();
 
