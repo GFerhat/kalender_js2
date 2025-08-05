@@ -217,6 +217,7 @@ function generiereKalenderblatt(year, month) {
 console.log("test")
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
+    tr.classList.add("kalendertage");
     for (tageZaehler = 0;tageZaehler < 8; tageZaehler++) {
       const tableCell = document.createElement("td");
       if (tageZaehler==0) tableCell.className="kw";
