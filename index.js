@@ -1,19 +1,12 @@
-const options = {
-  //foramtiert mit korrekter 0 falls 1 digit zahl.
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-};
-//Variablendeklaration (dates)
-let heute = new Date(); //gibt mir exakt das Aktuelle Datum mit Zeit und Zeitzone
-let tag = heute.getDate(); //Tag
-let monat = heute.getMonth(); //Monat
-let jahr = heute.getFullYear(); //Jahr
-let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0).getDate();
-let heutigesDatumDeutsch = heute.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
-document.title = "Kalenderblatt " + heutigesDatumDeutsch;
-
-
+const wochentagArray = [
+  "Sonntag",
+  "Montag",
+  "Dienstag",
+  "Mittwoch", //get Wochentag Name
+  "Donnerstag",
+  "Freitag",
+  "Samstag",
+];
 //gibt der Variable monatName immer den Aktuellen monat als String.
 const monatArray = [
   "Januar",
@@ -29,28 +22,37 @@ const monatArray = [
   "November",
   "Dezember",
 ];
-let monatNum = heute.getMonth();
-let monatName = monatArray[monatNum];
 
-const wochentagArray = [
-  "Sonntag",
-  "Montag",
-  "Dienstag",
-  "Mittwoch", //get Wochentag Name
-  "Donnerstag",
-  "Freitag",
-  "Samstag",
-];
+const options = {
+  //foramtiert mit korrekter 0 falls 1 digit zahl.
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+};
+
+//Variablendeklaration (dates)
+let heute = new Date(); //gibt mir exakt das Aktuelle Datum mit Zeit und Zeitzone
+let tag = heute.getDate(); //Tag
+let monat = heute.getMonth(); //Monat
+let jahr = heute.getFullYear(); //Jahr
+let monatName = monatArray[monat];
+let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0).getDate();
 let wochentagNum = heute.getDay();
 let wochentag = wochentagArray[wochentagNum];
+let heutigesDatumDeutsch = heute.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
+let weekNumber = getISOWeek(heute);
+document.title = "Kalenderblatt " + heutigesDatumDeutsch;
+const kalenderContainer = document.getElementById("kalendertage");
 
-console.log(
-  "ist ein schaltjahr mathe: " + (jahr % 4 == 0 && !jahr % 100 == 0) ||
-    jahr % 400 == 0
-);
-console.log(
-  "ist ein schaltjahr datum: " + (new Date(jahr, 1, 29).getMonth() == 1)
-);
+
+// console.log(
+//   "ist ein schaltjahr mathe: " + (jahr % 4 == 0 && !jahr % 100 == 0) ||
+//     jahr % 400 == 0
+// );
+// console.log(
+//   "ist ein schaltjahr datum: " + (new Date(jahr, 1, 29).getMonth() == 1)
+// );
+
 
 let previousMonthEnd = new Date(heute.getFullYear(), heute.getMonth(), 0);
 let firstOfTheMonth = new Date(heute.getFullYear(), heute.getMonth(), 1);
@@ -72,17 +74,13 @@ if (firstOfTheMonth.getDay() != 1) {
     if (whileBreak > 7) break;
   }
 }
-console.log(dayofPreviousMonthList);
-console.log(dayofPreviousMonthList.length);
 
 function getISOWeek(date) { //Berechnet in welcher Kalenderwoche wir uns befinden.
     const target = new Date(date.valueOf());
     console.log("target: "+ target);
-    
     // ISO-Woche beginnt am Montag, also auf den nächsten Donnerstag springen
     target.setDate(target.getDate() + 3 - (target.getDay() + 6) % 7);
     console.log("target: "+ target);
-
     // 1. Januar des Jahres
     const firstThursday = new Date(target.getFullYear(), 0, 4);
     console.log("firstThursday: "+ firstThursday);
@@ -90,17 +88,13 @@ function getISOWeek(date) { //Berechnet in welcher Kalenderwoche wir uns befinde
     firstThursday.setDate(firstThursday.getDate() + 3 - (firstThursday.getDay() + 6) % 7);
     console.log("firstThursday: "+ firstThursday);
     // Differenz in Tagen berechnen und durch 7 teilen
-    const weekNumber = 1 + Math.round((target - firstThursday) / (7 * 24 * 60 * 60 * 1000)
-    );
+    const weekNumber = 1 + Math.round((target - firstThursday) / (7 * 24 * 60 * 60 * 1000));
     return weekNumber;
-    
 }
 
-let weekNumber = getISOWeek(heute);
 console.log("Kalenderwoche von " + heute.toLocaleDateString() + " ist: " + weekNumber);
 
-function generiereKalenderblatt(year, month) {
-  const kalenderContainer = document.getElementById("kalendertage");
+function generiereKalenderblatt(year, month) { 
   const tageDesVormonats = new Date(year,month,1).getDay()-1;
   const tageDesFolgemonats = new Date(year,month +2,0).getDay();
   const tageImMonat = new Date(year, month + 1, 0).getDate();
@@ -112,7 +106,6 @@ function generiereKalenderblatt(year, month) {
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
     tableRow.classList.add("kalendertage");
-
     // //KW um erste spalte zu füllen (kw rechner funktion sollte codiert werden)
     const kalenderwocheTd = document.createElement("td");
     kalenderwocheTd.classList.add("kw");
@@ -143,8 +136,6 @@ function generiereKalenderblatt(year, month) {
   }
 
 }
-
-generiereKalenderblatt(jahr, monat);
 
 function calcTageVormonat(wochentagNum) {
   //Rechnet den aktuellen Tag -1 bis Montag
@@ -259,7 +250,7 @@ if (feiertagArray.includes(heutigesDatumDeutsch)) {
 //überschreibt ins HTML Dokument
 //Kalenderblatt
 document.getElementById("kalenderblattHeadJs").innerHTML =
-  monatName + " " + jahr;
+monatName + " " + jahr;
 document.getElementById("kalenderblattH1").innerHTML = heutigesDatumDeutsch;
 //Historie
 document.getElementById("datumHistorie").innerHTML = monatName;
@@ -272,7 +263,20 @@ document.getElementById("zahlWochentag").innerHTML = getMonatwoche(heute.getDate
 document.getElementById("monatNameJs").innerHTML = " " + monatName;
 document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
 
-
+function changeMonth(direction) {
+  direction == '-' ? monat-- : monat++;
+  if (monat == -1) {
+    jahr--;
+    monat = 11;
+  }
+  if (monat == 12) {
+    jahr++;
+    monat=0;
+  }
+  kalenderContainer.innerHTML="";
+  generiereKalenderblatt(jahr, monat);
+}
+generiereKalenderblatt(jahr, monat);
 
 
 

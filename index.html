@@ -22,13 +22,13 @@
                     <tr><!-- tr fügt eine Zeile hinzu-->
                         <th class="kalenderblatthead" colspan="8">
                             <div class="month-navigation">
-                                <span class="nav-arrowback">
+                                <span class="nav-arrowback" onclick="changeMonth('-')">
                                     <img class="nav-image" src="./assets/raceflag3.png" alt="backward-nav">
                                 </span>
                                 <span class="month-title">
-                                    <h2><span id="kalenderblattHeadJs">Monat Jahr</span></h2>
+                                    <h2><span id="kalenderblattHeadJs"></span></h2>
                                 </span>
-                                <span class="nav-arrowf">
+                                <span class="nav-arrowf" onclick="changeMonth('+')">
                                     <img class="nav-image" src="./assets/raceflag3.png" alt="forward-nav">
                                 </span>
                             </div>
