@@ -30,19 +30,8 @@ const options = {
   year: "numeric",
 };
 
-//Variablendeklaration (dates)
-let heute = new Date(); //gibt mir exakt das Aktuelle Datum mit Zeit und Zeitzone
-let tag = heute.getDate(); //Tag
-let monat = heute.getMonth(); //Monat
-let jahr = heute.getFullYear(); //Jahr
-let monatName = monatArray[monat];
-let tageDesMonats = new Date(heute.getFullYear(), heute.getMonth() + 1, 0).getDate();
-let wochentagNum = heute.getDay();
-let wochentag = wochentagArray[wochentagNum];
-let heutigesDatumDeutsch = heute.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
-let weekNumber = getISOWeek(heute);
-document.title = "Kalenderblatt " + heutigesDatumDeutsch;
-const kalenderContainer = document.getElementById("kalendertage");
+
+
 
 
 // console.log(
@@ -53,29 +42,8 @@ const kalenderContainer = document.getElementById("kalendertage");
 //   "ist ein schaltjahr datum: " + (new Date(jahr, 1, 29).getMonth() == 1)
 // );
 
-
-let previousMonthEnd = new Date(heute.getFullYear(), heute.getMonth(), 0);
-let firstOfTheMonth = new Date(heute.getFullYear(), heute.getMonth(), 1);
-let dayofPreviousMonthList = [];
-let iteratorDay = previousMonthEnd;
-let whileBreak = 0;
-if (firstOfTheMonth.getDay() != 1) {
-  //wenn der erste des Monats es kein Montag ist
-  while (iteratorDay.getDay() != 0) {
-    //bleibt aufm montag stehen
-    whileBreak++;
-    dayofPreviousMonthList.push(
-      iteratorDay.toLocaleDateString("de-DE", options)
-    );
-    iteratorDay = new Date
-    ( iteratorDay.getFullYear(),
-      iteratorDay.getMonth(),
-      iteratorDay.getDate() - 1);
-    if (whileBreak > 7) break;
-  }
-}
-
-function getISOWeek(date) { //Berechnet in welcher Kalenderwoche wir uns befinden.
+function 
+(date) { //Berechnet in welcher Kalenderwoche wir uns befinden.
     const target = new Date(date.valueOf());
     console.log("target: "+ target);
     // ISO-Woche beginnt am Montag, also auf den nächsten Donnerstag springen
@@ -92,16 +60,18 @@ function getISOWeek(date) { //Berechnet in welcher Kalenderwoche wir uns befinde
     return weekNumber;
 }
 
-console.log("Kalenderwoche von " + heute.toLocaleDateString() + " ist: " + weekNumber);
-
-function generiereKalenderblatt(year, month) { 
-  const tageDesVormonats = new Date(year,month,1).getDay()-1;
-  const tageDesFolgemonats = new Date(year,month +2,0).getDay();
-  const tageImMonat = new Date(year, month + 1, 0).getDate();
-  const tageImVormonat = new Date(year, month, 0).getDate();
+function generiereKalenderblatt(jahr, monat, tag) {
+  const kalenderContainer = document.getElementById("kalendertage");
+  kalenderContainer.innerHTML="";
+  const tageDesVormonats = new Date(jahr,monat,1).getDay()-1;
+  const tageDesFolgemonats = new Date(jahr,monat +2,0).getDay();
+  const tageImMonat = new Date(jahr, monat + 1, 0).getDate();
+  const tageImVormonat = new Date(jahr, monat, 0).getDate();
   const tageInsgesamt = tageImMonat + tageDesVormonats;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
   const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
+  let weekNumber = getISOWeek(tag);
+  const tagImMonat = tag.getDate();
 
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
@@ -118,7 +88,7 @@ function generiereKalenderblatt(year, month) {
       if (tageZaehler==6) tableCell.className="sa";//markiert Wochendende mit Farbe.
       if (tageZaehler==7) tableCell.className="so";
       const heute = wochenZaehler * 7 + tageZaehler - tageDesVormonats;//Berechnet das Datum korrrekt.
-      if (heute == tag) tableCell.className="heute";//markiert den heutigen Tag.
+      if (heute == tagImMonat) tableCell.className="heute";//markiert den heutigen Tag.
       tableCell.innerText = heute;
       if (wochenZaehler==0 && tageZaehler <= tageDesVormonats) {//fügt Tage im Vormonat hinzu.
         tableCell.className="monatPassiv";//graut den Tag aus
@@ -137,21 +107,6 @@ function generiereKalenderblatt(year, month) {
 
 }
 
-function calcTageVormonat(wochentagNum) {
-  //Rechnet den aktuellen Tag -1 bis Montag
-  let tageBisMontag = 0;
-  while (wochentagNum !== 1) {
-    tageBisMontag++;
-    wochentagNum--;
-    if (wochentagNum < 0) {
-      wochentagNum = 6;
-    }
-  }
-  return tageBisMontag;
-}
-let tageBisMontag = calcTageVormonat(wochentagNum);
-calcTageVormonat(tageBisMontag);
-
 //Ermittelt in welcher Monatwoche wir uns befinden.
 // Monatwoche != Kalenderwoche
 function getMonatwoche(tag) {
@@ -167,8 +122,7 @@ function getMonatwoche(tag) {
   return 5;
 }
 
-//Holiday Abteilung:__________________________________________________
-function getOsterSonntag() {
+function getOsterSonntag(jahr) {
   //Spencer algorythm um osternDate zu ermitteln, egal in welchem Jahr
   let a = jahr % 19;
   let b = Math.floor(jahr / 100);
@@ -186,82 +140,7 @@ function getOsterSonntag() {
   let o = (h + l - 7 * m + 114) % 31;
   return new Date(jahr, n - 1, o + 1); //n ist der Monat o ist der Tag
 }
-
-let osternDate = getOsterSonntag();
-let ostern = osternDate.toLocaleDateString("de-DE", options);
-
-//berechnet die vom Ostern abhängigen Feiertage- + / - addiert / subtrahiert Tage
-let ostermontag = new Date(osternDate);
-ostermontag.setDate(osternDate.getDate() + 1);
-ostermontag = ostermontag.toLocaleDateString("de-DE", options);
-
-let christiHimmelfahrt = new Date(osternDate);
-christiHimmelfahrt.setDate(osternDate.getDate() + 39);
-christiHimmelfahrt = christiHimmelfahrt.toLocaleDateString("de-DE", options);
-
-let pfingsten = new Date(osternDate);
-pfingsten.setDate(osternDate.getDate() + 49);
-pfingsten = pfingsten.toLocaleDateString("de-DE", options);
-
-let karfreitag = new Date(osternDate);
-karfreitag.setDate(osternDate.getDate() - 2);
-karfreitag = karfreitag.toLocaleDateString("de-DE", options);
-
-//feste Feiertage
-//toLocalDateString wandelt das Datum in einen deutschen String
-let neujahr = new Date(jahr, 0, 1);
-let formatNeujahr = neujahr.toLocaleDateString("de-DE", options);
-
-let tagDerArbeit = new Date(jahr, 4, 1);
-let formatTagDerArbeit = tagDerArbeit.toLocaleDateString("de-DE", options);
-
-let TDDE = new Date(jahr, 9, 3);
-let formatTDDE = TDDE.toLocaleDateString("de-DE", options);
-
-let weihnachten1 = new Date(jahr, 11, 25);
-let formatWeihnachten1 = weihnachten1.toLocaleDateString("de-DE", options);
-
-let weihnachten2 = new Date(jahr, 11, 26);
-let formatWeihnachten2 = weihnachten2.toLocaleDateString("de-DE", options);
-
-const feiertagArray = [
-  formatNeujahr,
-  formatWeihnachten1,
-  formatWeihnachten2,
-  formatTDDE,
-  formatTagDerArbeit,
-  ostern,
-  karfreitag,
-  pfingsten,
-  christiHimmelfahrt,
-  ostermontag,
-];
-
 // const feiertagArrayName [{}];
-
-//sagt dem HTML infotext ob es sich im "ein" oder "kein" Feiertag handelt.
-if (feiertagArray.includes(heutigesDatumDeutsch)) {
-  document.getElementById("obFeiertag").innerHTML = "ein ";
-} else {
-  document.getElementById("obFeiertag").innerHTML = "kein ";
-}
-//Holiday Abteilung End__________________________________________________
-
-//überschreibt ins HTML Dokument
-//Kalenderblatt
-document.getElementById("kalenderblattHeadJs").innerHTML =
-monatName + " " + jahr;
-document.getElementById("kalenderblattH1").innerHTML = heutigesDatumDeutsch;
-//Historie
-document.getElementById("datumHistorie").innerHTML = monatName;
-//Infotext
-document.getElementById("datumInfo").innerHTML = heutigesDatumDeutsch;
-document.getElementById("datumInfo1").innerHTML = heutigesDatumDeutsch;
-document.getElementById("wochentagInfo1").innerHTML = wochentag;
-document.getElementById("wochentagInfo2").innerHTML = wochentag + " ";
-document.getElementById("zahlWochentag").innerHTML = getMonatwoche(heute.getDate()) + "te";
-document.getElementById("monatNameJs").innerHTML = " " + monatName;
-document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
 
 function changeMonth(direction) {
   direction == '-' ? monat-- : monat++;
@@ -273,10 +152,95 @@ function changeMonth(direction) {
     jahr++;
     monat=0;
   }
-  kalenderContainer.innerHTML="";
+  // monatName = monatArray[monat];
+  
+  kalenderInitialisieren()
+}
+function kalenderInitialisieren() {
+  //Variablendeklaration (dates)
+  let ausgewaehlterTag = new Date(); //gibt mir exakt das Aktuelle Datum mit Zeit und Zeitzone
+  let tag = ausgewaehlterTag.getDate(); //Tag
+  let monat = ausgewaehlterTag.getMonth(); //Monat
+  let jahr = ausgewaehlterTag.getFullYear(); //Jahr
+  let monatName = monatArray[monat];
+  let tageDesMonats = new Date(ausgewaehlterTag.getFullYear(), ausgewaehlterTag.getMonth() + 1, 0).getDate();
+  let wochentagNum = ausgewaehlterTag.getDay();
+  let wochentag = wochentagArray[wochentagNum];
+  let heutigesDatumDeutsch = ausgewaehlterTag.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
+  document.title = "Kalenderblatt " + heutigesDatumDeutsch;
+
+  let osternDate = getOsterSonntag(jahr);
+  let ostern = osternDate.toLocaleDateString("de-DE", options);
+  
+  //berechnet die vom Ostern abhängigen Feiertage- + / - addiert / subtrahiert Tage
+  let ostermontag = new Date(osternDate);
+  ostermontag.setDate(osternDate.getDate() + 1);
+  ostermontag = ostermontag.toLocaleDateString("de-DE", options);
+  
+  let christiHimmelfahrt = new Date(osternDate);
+  christiHimmelfahrt.setDate(osternDate.getDate() + 39);
+  christiHimmelfahrt = christiHimmelfahrt.toLocaleDateString("de-DE", options);
+  
+  let pfingsten = new Date(osternDate);
+  pfingsten.setDate(osternDate.getDate() + 49);
+  pfingsten = pfingsten.toLocaleDateString("de-DE", options);
+  
+  let karfreitag = new Date(osternDate);
+  karfreitag.setDate(osternDate.getDate() - 2);
+  karfreitag = karfreitag.toLocaleDateString("de-DE", options);
+  
+  //feste Feiertage
+  //toLocalDateString wandelt das Datum in einen deutschen String
+  let neujahr = new Date(jahr, 0, 1);
+  let formatNeujahr = neujahr.toLocaleDateString("de-DE", options);
+  
+  let tagDerArbeit = new Date(jahr, 4, 1);
+  let formatTagDerArbeit = tagDerArbeit.toLocaleDateString("de-DE", options);
+  
+  let TDDE = new Date(jahr, 9, 3);
+  let formatTDDE = TDDE.toLocaleDateString("de-DE", options);
+  
+  let weihnachten1 = new Date(jahr, 11, 25);
+  let formatWeihnachten1 = weihnachten1.toLocaleDateString("de-DE", options);
+  
+  let weihnachten2 = new Date(jahr, 11, 26);
+  let formatWeihnachten2 = weihnachten2.toLocaleDateString("de-DE", options);
+
+  const feiertagArray = [
+    formatNeujahr,
+    formatWeihnachten1,
+    formatWeihnachten2,
+    formatTDDE,
+    formatTagDerArbeit,
+    ostern,
+    karfreitag,
+    pfingsten,
+    christiHimmelfahrt,
+    ostermontag,
+  ];
+  //sagt dem HTML infotext ob es sich im "ein" oder "kein" Feiertag handelt.
+  if (feiertagArray.includes(heutigesDatumDeutsch)) {
+    document.getElementById("obFeiertag").innerHTML = "ein ";
+  } else {
+    document.getElementById("obFeiertag").innerHTML = "kein ";
+  }
+  //überschreibt ins HTML Dokument
+  //Kalenderblatt
+  document.getElementById("kalenderblattHeadJs").innerHTML =
+  monatName + " " + jahr;
+  document.getElementById("kalenderblattH1").innerHTML = heutigesDatumDeutsch;
+  //Historie
+  document.getElementById("datumHistorie").innerHTML = monatName;
+  //Infotext
+  document.getElementById("datumInfo").innerHTML = heutigesDatumDeutsch;
+  document.getElementById("datumInfo1").innerHTML = heutigesDatumDeutsch;
+  document.getElementById("wochentagInfo1").innerHTML = wochentag;
+  document.getElementById("wochentagInfo2").innerHTML = wochentag + " ";
+  document.getElementById("zahlWochentag").innerHTML = getMonatwoche(ausgewaehlterTag.getDate()) + "te";
+  document.getElementById("monatNameJs").innerHTML = " " + monatName;
+  document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
+
   generiereKalenderblatt(jahr, monat);
 }
-generiereKalenderblatt(jahr, monat);
 
-
-
+kalenderInitialisieren()
