@@ -75,6 +75,77 @@ if (firstOfTheMonth.getDay() != 1) {
 console.log(dayofPreviousMonthList);
 console.log(dayofPreviousMonthList.length);
 
+function getISOWeek(date) { //Berechnet in welcher Kalenderwoche wir uns befinden.
+    const target = new Date(date.valueOf());
+    console.log("target: "+ target);
+    
+    // ISO-Woche beginnt am Montag, also auf den nächsten Donnerstag springen
+    target.setDate(target.getDate() + 3 - (target.getDay() + 6) % 7);
+    console.log("target: "+ target);
+
+    // 1. Januar des Jahres
+    const firstThursday = new Date(target.getFullYear(), 0, 4);
+    console.log("firstThursday: "+ firstThursday);
+    // Auf den Donnerstag der ersten ISO-Woche springen
+    firstThursday.setDate(firstThursday.getDate() + 3 - (firstThursday.getDay() + 6) % 7);
+    console.log("firstThursday: "+ firstThursday);
+    // Differenz in Tagen berechnen und durch 7 teilen
+    const weekNumber = 1 + Math.round((target - firstThursday) / (7 * 24 * 60 * 60 * 1000)
+    );
+    return weekNumber;
+    
+}
+
+let weekNumber = getISOWeek(heute);
+console.log("Kalenderwoche von " + heute.toLocaleDateString() + " ist: " + weekNumber);
+
+function generiereKalenderblatt(year, month) {
+  const kalenderContainer = document.getElementById("kalendertage");
+  const tageDesVormonats = new Date(year,month,1).getDay()-1;
+  const tageDesFolgemonats = new Date(year,month +2,0).getDay();
+  const tageImMonat = new Date(year, month + 1, 0).getDate();
+  const tageImVormonat = new Date(year, month, 0).getDate();
+  const tageInsgesamt = tageImMonat + tageDesVormonats;
+  const wochenZahl = Math.ceil(tageInsgesamt / 7);
+  const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
+
+  for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
+    const tableRow = document.createElement("tr");
+    tableRow.classList.add("kalendertage");
+
+    // //KW um erste spalte zu füllen (kw rechner funktion sollte codiert werden)
+    const kalenderwocheTd = document.createElement("td");
+    kalenderwocheTd.classList.add("kw");
+    kalenderwocheTd.textContent= weekNumber;
+    weekNumber++;
+    tableRow.appendChild(kalenderwocheTd);
+    
+    for (let tageZaehler = 1;tageZaehler <=7; tageZaehler++) {//fügt immer 7 Zellen in die Zeile hinzu
+      const tableCell = document.createElement("td");
+      if (tageZaehler==6) tableCell.className="sa";//markiert Wochendende mit Farbe.
+      if (tageZaehler==7) tableCell.className="so";
+      const heute = wochenZaehler * 7 + tageZaehler - tageDesVormonats;//Berechnet das Datum korrrekt.
+      if (heute == tag) tableCell.className="heute";//markiert den heutigen Tag.
+      tableCell.innerText = heute;
+      if (wochenZaehler==0 && tageZaehler <= tageDesVormonats) {//fügt Tage im Vormonat hinzu.
+        tableCell.className="monatPassiv";//graut den Tag aus
+        //addiert die Tage des Vormonats auf die negativen Zahlen vor unserem 1. des altuellen Monats.
+        //bsp. vor dem ersten des Monats steht eine 0. 0+31(TageDesVormonats). Erste Zelle vor der 1 wird mit 31 gefüllt.
+        tableCell.innerText = heute + tageImVormonat; 
+      }
+      if (heute>tageImMonat) { //Füllt Tage des folgemonats auf wenn vorhanden.
+        tableCell.className="monatPassiv";//graut den Tag aus
+        tableCell.innerText=heute-tageImMonat;//resetted die Variable heute 
+      }
+      tableRow.appendChild(tableCell);
+    }
+    kalenderContainer.appendChild(tableRow);
+  }
+
+}
+
+generiereKalenderblatt(jahr, monat);
+
 function calcTageVormonat(wochentagNum) {
   //Rechnet den aktuellen Tag -1 bis Montag
   let tageBisMontag = 0;
@@ -203,73 +274,5 @@ document.getElementById("anzahlMonatTage").innerHTML = tageDesMonats;
 
 
 
-// function getDateWeek(date) {
-//     const januaryFirst = 
-//         new Date(date.getFullYear(), 0, 1);
-//     const daysToNextMonday = 
-//         (januaryFirst.getDay() === 1) ? 0 : 
-//         (7 - januaryFirst.getDay()) % 7;
-//     const nextMonday = 
-//         new Date(date.getFullYear(), 0, 
-//         januaryFirst.getDate() + daysToNextMonday);
 
-//     return (date < nextMonday) ? 52 : 
-//     (date > nextMonday ? Math.ceil(
-//     (date - nextMonday) / (24 * 3600 * 1000) / 7) : 1);
-// }
-
-// const currentDate = new Date();
-// const weekNumber = getDateWeek();
-
-// console.log("Week number of " + currentDate + " is : " + weekNumber);
-
-function getKalenderwoche(year) {
-  const day = new Date(year, 0, 1).getDay();
-  let kalenderwoche = day >= 4 ? 1 : 0;
-}
-
-// kalenderwoche(jahr);
-
-function generiereKalenderblatt(year, month) {
-  const kalenderContainer = document.getElementById("kalendertage");
-  const tageDesVormonats = new Date(year,month,1).getDay()-1;
-  const tageDesFolgemonats = new Date(year,month +2,0).getDay();
-  const tageImMonat = new Date(year, month + 1, 0).getDate();
-  const tageImVormonat = new Date(year, month, 0).getDate();
-  const tageInsgesamt = tageImMonat + tageDesVormonats;
-  const wochenZahl = Math.ceil(tageInsgesamt / 7);
-  const tageVomFolgemonat = wochenZahl * 7 - tageInsgesamt;
-
-  for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
-    const tableRow = document.createElement("tr");
-    tableRow.classList.add("kalendertage");
-
-    // //KW um erste spalte zu füllen (kw rechner funktion sollte codiert werden)
-    const kalenderwocheTd = document.createElement("td");
-    kalenderwocheTd.classList.add("kw");
-    kalenderwocheTd.textContent= "test";
-    tableRow.appendChild(kalenderwocheTd);
-        
-    for (let tageZaehler = 1;tageZaehler <=7; tageZaehler++) {
-      const tableCell = document.createElement("td");
-      if (tageZaehler==6) tableCell.className="sa";
-      if (tageZaehler==7) tableCell.className="so";
-      const currentDate = wochenZaehler * 7 + tageZaehler - tageDesVormonats;
-      tableCell.innerText = currentDate;
-      if (wochenZaehler==0 && tageZaehler <= tageDesVormonats) {
-        tableCell.className="monatPassiv";
-        tableCell.innerText = currentDate + tageImVormonat;
-      }
-      if (currentDate>tageImMonat) {
-        tableCell.className="monatPassiv";
-        tableCell.innerText=currentDate-tageImMonat;
-      }
-      tableRow.appendChild(tableCell);
-    }
-    kalenderContainer.appendChild(tableRow);
-  }
-
-}
-
-generiereKalenderblatt(jahr, 11);
 
