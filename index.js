@@ -39,6 +39,7 @@ let wochentagNum;
 let wochentag;
 let ausgewaehltesDatumDeutsch;
 let weekNumber;
+console.log(new Date(2025,5,1).getDay());
 
 const kalenderContainer = document.getElementById("kalendertage");
 
@@ -148,40 +149,53 @@ function feiertagFestlegung(ausgewaehltesDatumDeutsch, jahr) {
   let karfreitag = new Date(osternDate);
   karfreitag.setDate(osternDate.getDate() - 2);
   karfreitag = karfreitag.toLocaleDateString("de-DE", options);
+  
+  let fronleichnam = new Date(osternDate);
+  fronleichnam.setDate(osternDate.getDate() + 60);
+  fronleichnam = fronleichnam.toLocaleDateString("de-DE", options);
 
   //feste Feiertage
   //toLocalDateString wandelt das Datum in einen deutschen String
   let neujahr = new Date(jahr, 0, 1);
-  let formatNeujahr = neujahr.toLocaleDateString("de-DE", options);
+  neujahr = neujahr.toLocaleDateString("de-DE", options);
 
   let tagDerArbeit = new Date(jahr, 4, 1);
-  let formatTagDerArbeit = tagDerArbeit.toLocaleDateString("de-DE", options);
+  tagDerArbeit = tagDerArbeit.toLocaleDateString("de-DE", options);
 
   let TDDE = new Date(jahr, 9, 3);
-  let formatTDDE = TDDE.toLocaleDateString("de-DE", options);
+  TDDE = TDDE.toLocaleDateString("de-DE", options);
 
   let weihnachten1 = new Date(jahr, 11, 25);
-  let formatWeihnachten1 = weihnachten1.toLocaleDateString("de-DE", options);
+  weihnachten1 = weihnachten1.toLocaleDateString("de-DE", options);
 
   let weihnachten2 = new Date(jahr, 11, 26);
-  let formatWeihnachten2 = weihnachten2.toLocaleDateString("de-DE", options);
+  weihnachten2 = weihnachten2.toLocaleDateString("de-DE", options);
 
   const feiertagArray = [
-    formatNeujahr,
-    formatWeihnachten1,
-    formatWeihnachten2,
-    formatTDDE,
-    formatTagDerArbeit,
-    ostern,
-    karfreitag,
-    pfingsten,
-    christiHimmelfahrt,
-    ostermontag,
-  ];
+    {feiertagName: "Neujahr", datum: neujahr},
+    {feiertagName: "Karfreitag", datum: karfreitag},
+    {feiertagName: "Ostern", datum: ostern},
+    {feiertagName: "Ostermontag", datum: ostermontag},
+    {feiertagName: "Tag der Arbeit", datum: tagDerArbeit},
+    {feiertagName: "Himmelfahrt", datum: christiHimmelfahrt},
+    {feiertagName: "Pfingsten", datum: pfingsten},
+    {feiertagName: "Fronleichnam", datum: fronleichnam},
+    {feiertagName: "Tag der Deutschen Einheit", datum: TDDE},
+    {feiertagName: "Weihnachten", datum: weihnachten1},
+    {feiertagName: "Weihnachten", datum: weihnachten2},
+    ];
 
-  //sagt dem HTML infotext ob es sich im "ein" oder "kein" Feiertag handelt.
-  if (feiertagArray.includes(ausgewaehltesDatumDeutsch)) {
-    document.getElementById("obFeiertag").innerHTML = "ein ";
+  // //sagt dem HTML infotext ob es sich im "ein" oder "kein" Feiertag handelt.
+  // if (feiertagArray.includes(ausgewaehltesDatumDeutsch)) {
+  //   document.getElementById("obFeiertag").innerHTML = "ein ";
+  // } else {
+  //   document.getElementById("obFeiertag").innerHTML = "kein ";
+  // }
+
+  const gefundenerFeiertag = feiertagArray.find(feiertach => feiertach.datum === ausgewaehltesDatumDeutsch);
+
+  if (gefundenerFeiertag) {
+    document.getElementById("obFeiertag").innerHTML = `ein gesetzlicher Feiertag in Hessen. (${gefundenerFeiertag.feiertagName})`;
   } else {
     document.getElementById("obFeiertag").innerHTML = "kein ";
   }
@@ -190,12 +204,15 @@ function feiertagFestlegung(ausgewaehltesDatumDeutsch, jahr) {
 function generiereKalenderblatt(year, month, kalenderContainer, weekNumber,ausgewaehltesDatum) {
   kalenderContainer.innerHTML = "";
   const heute = new Date ();
-  const tageDesVormonats = new Date(year, month, 1).getDay() - 1;
+  const anzahlTageDesVormonats = new Date(year, month, 1).getDay() == 0 ? 6 : new Date(year, month, 1).getDay() - 1;
+
+  const anzahlTageDesFolgemonats = new Date(year, month +1, 0).getDay() == 0 ? 0 : 7 - new Date(year, month+1, 0).getDay();
   const tageImMonat = new Date(year, month + 1, 0).getDate();
   const tageImVormonat = new Date(year, month, 0).getDate();
-  const tageInsgesamt = tageImMonat + tageDesVormonats;
+  const tageInsgesamt = tageImMonat + anzahlTageDesVormonats + anzahlTageDesFolgemonats;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
-
+  console.log(wochenZahl);
+  console.log(tageInsgesamt)
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
     tableRow.classList.add("kalendertage");
@@ -209,7 +226,7 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber,ausge
     for (let tageZaehler = 1; tageZaehler <= 7; tageZaehler++) {
       //fügt immer 7 Zellen in die Zeile hinzu
       const tableCell = document.createElement("td");
-      const datumDerZelle = wochenZaehler * 7 + tageZaehler - tageDesVormonats; //Berechnet das Datum korrrekt.
+      const datumDerZelle = wochenZaehler * 7 + tageZaehler - anzahlTageDesVormonats; //Berechnet das Datum korrrekt.
       tableCell.addEventListener("click", () => {
         initialize(new Date(year,month,datumDerZelle))
       })
@@ -219,7 +236,7 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber,ausge
       tableCell.innerText = datumDerZelle;
       if (datumDerZelle == ausgewaehltesDatum.getDate()) tableCell.className ="ausgewaehltesDatum";
       console.log(ausgewaehltesDatum.getDate());
-      if (wochenZaehler == 0 && tageZaehler <= tageDesVormonats) {
+      if (wochenZaehler == 0 && tageZaehler <= anzahlTageDesVormonats) {
         //fügt Tage im Vormonat hinzu.
         tableCell.className = "monatPassiv"; //graut den Tag aus
         //addiert die Tage des Vormonats auf die negativen Zahlen vor unserem 1. des altuellen Monats.
