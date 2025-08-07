@@ -130,6 +130,13 @@ th.kalenderblatthead { /* Kopfzeile des Kalenders */
     font-weight: bold;
 }
 
+#kalenderblatt .ausgewaehltesDatum {
+    /* markiert den aktuellen Tag */
+    color: black;
+    background-color: rgb(235, 221, 112);
+    font-weight: bold;
+}
+
 tr.wochentage th { /* Wochentage im Kalender */
   background-color:var(--kw-color);
   font-weight: bold;

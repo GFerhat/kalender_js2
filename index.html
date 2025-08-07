@@ -7,7 +7,7 @@
     <!--Passt die Darstellung aufs jeweilige device an-->
     <title>Kalender vom 14.07.2025</title>
     <link rel="stylesheet" href="index.css"> <!--verlinkt die CSS Datei-->
-
+    <script src="index.js" defer></script>
 </head>
 
 <body>
@@ -22,13 +22,13 @@
                     <tr><!-- tr fügt eine Zeile hinzu-->
                         <th class="kalenderblatthead" colspan="8">
                             <div class="month-navigation">
-                                <span class="nav-arrowback" onclick="changeMonth('-')">
+                                <span class="nav-arrowback">
                                     <img class="nav-image" src="./assets/raceflag3.png" alt="backward-nav">
                                 </span>
                                 <span class="month-title">
                                     <h2><span id="kalenderblattHeadJs"></span></h2>
                                 </span>
-                                <span class="nav-arrowf" onclick="changeMonth('+')">
+                                <span class="nav-arrowf">
                                     <img class="nav-image" src="./assets/raceflag3.png" alt="forward-nav">
                                 </span>
                             </div>
@@ -45,60 +45,7 @@
                         <th class="so">So</th>
                     </tr>
                 </thead>
-                <tbody id="kalendertage">
-                    
-                    <!--greift auf den tatsächlichen Tabellleninhalt zu -->
-                    <!-- <tr class="kalendertage1">
-                        <td class="kw">27</td>
-                        <td class="mo">30</td>
-                        <td class="di">1</td>
-                        <td class="mi">2</td>
-                        <td class="do">3</td>
-                        <td class="fr">4</td>
-                        <td class="sa">5</td>
-                        <td class="so">6</td>
-                    </tr>
-                    <tr class="kalendertage2">
-                        <td class="kw">28</td>
-                        <td class="mo">7</td>
-                        <td class="di">8</td>
-                        <td class="mi">9</td>
-                        <td class="do">10</td>
-                        <td class="fr">11</td>
-                        <td class="sa">12</td>
-                        <td class="so">13</td>
-                    </tr>
-                    <tr class="kalendertage3">
-                        <td class="kw">29</td>
-                        <td class="mo">14</td>
-                        <td class="di">15</td>
-                        <td class="mi">16</td>
-                        <td class="do">17</td>
-                        <td class="fr">18</td>
-                        <td class="sa">19</td>
-                        <td class="so">20</td>
-                    </tr>
-                    <tr class="kalendertage4">
-                        <td class="kw">30</td>
-                        <td class="mo">21</td>
-                        <td class="di">22</td>
-                        <td class="mi">23</td>
-                        <td class="do">24</td>
-                        <td class="fr">25</td>
-                        <td class="sa">26</td>
-                        <td class="so">27</td>
-                    </tr>
-                    <tr class="kalendertage5">
-                        <td class="kw">31</td>
-                        <td class="mo">28</td>
-                        <td class="di">29</td>
-                        <td class="mi">30</td>
-                        <td class="do">31</td>
-                        <td class="fr">1</td>
-                        <td class="sa">2</td>
-                        <td class="so">3</td>
-                    </tr> -->
-                </tbody>
+                <tbody id="kalendertage"></tbody>
             </table>
         </div>
         <div id="historie">
@@ -146,7 +93,7 @@
                 Der <span id="datumInfo"> </span> ist ein <span id="wochentagInfo1"></span>
                 und zwar der <span id="zahlWochentag">2</span>
                 <span id="wochentagInfo2"></span>im Monat
-                <span id="monatNameJs"></span> des Jahres 2025. Dieser Monat hat
+                <span id="monatNameJs"></span> des Jahres <span id="jahrInfotext"></span>. Dieser Monat hat
                 <span id="anzahlTage"></span><span id="anzahlMonatTage">31</span> Tage.
                 Der <span id="datumInfo1"></span>
                 ist <span id="obFeiertag"></span>gesetzlicher Feiertag in Hessen. Der nächste gesetzliche
@@ -158,7 +105,6 @@
         <p>© Alle Rechte vorbehalten.</p>
         <p>Erstellt von Ferhat Gümüş</p>
     </footer>
-    <script src="index.js"></script>
 </body>
 
 </html>
