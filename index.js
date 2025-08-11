@@ -56,7 +56,8 @@ document.getElementsByClassName("nav-arrowf")[0].addEventListener("click", () =>
 function initialize(ausgewaehltesDatum) {
   mainVariables(ausgewaehltesDatum);
   feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
-  generiereKalenderblatt(jahr, monat, kalenderContainer, weekNumber, ausgewaehltesDatum);
+  const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
+  generiereKalenderblatt(jahr, monat, kalenderContainer, weekNumber, ausgewaehltesDatum, feiertagArray);
   implementHtmlText(
     monatName,
     wochentag,
@@ -72,23 +73,16 @@ function getISOWeek(date) {
   const dateInMilliseconds = new Date(date.valueOf());
   console.log("target: " + dateInMilliseconds);
   // ISO-Woche beginnt am Montag, also auf den nächsten Donnerstag springen
-  dateInMilliseconds.setDate(
-    dateInMilliseconds.getDate() + 3 - ((dateInMilliseconds.getDay() + 6) % 7)
-  );
+  dateInMilliseconds.setDate(dateInMilliseconds.getDate() + 3 - ((dateInMilliseconds.getDay() + 6) % 7));
   console.log("target: " + dateInMilliseconds);
   // 1. Januar des Jahres
-  const firstThursday = new Date(dateInMilliseconds.getFullYear(), 0, 4);
-  console.log("firstThursday: " + firstThursday);
+  const ersterDonnerstag = new Date(dateInMilliseconds.getFullYear(), 0, 4);
+  console.log("erster: " + ersterDonnerstag);
   // Auf den Donnerstag der ersten ISO-Woche springen
-  firstThursday.setDate(
-    firstThursday.getDate() + 3 - ((firstThursday.getDay() + 6) % 7)
-  );
-  console.log("firstThursday: " + firstThursday);
+  ersterDonnerstag.setDate(ersterDonnerstag.getDate() + 3 - ((ersterDonnerstag.getDay() + 6) % 7));
+  console.log("erster Donnerstag: " + ersterDonnerstag);
   // Differenz in Tagen berechnen und durch 7 teilen
-  const weekNumber =
-    1 +
-    Math.round(
-      (dateInMilliseconds - firstThursday) / (7 * 24 * 60 * 60 * 1000));
+  const weekNumber = 1 + Math.round((dateInMilliseconds - ersterDonnerstag) / (7 * 24 * 60 * 60 * 1000));
   return weekNumber;
 }
 
@@ -169,7 +163,6 @@ function feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr)
   let weihnachten2 = new Date(jahr, 11, 26);
   let formatWeihnachten2 = weihnachten2.toLocaleDateString("de-DE", options);
 
-
   const feiertagArray = [
     { feiertagName: "Neujahr", datum: neujahr, datumDeutsch: formatNeujahr },
     { feiertagName: "Karfreitag", datum: karfreitag, datumDeutsch: formatKarfreitag },
@@ -202,19 +195,19 @@ function feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr)
   } else {
     document.getElementById("obFeiertag").innerHTML = "kein gesetzlicher Feiertag in Hessen.";
   }
+  return feiertagArray;
 }
 
-function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausgewaehltesDatum) {
+function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausgewaehltesDatum, feiertagArray) {
   kalenderContainer.innerHTML = "";
   const heute = new Date();
   const anzahlTageDesVormonats = new Date(year, month, 1).getDay() == 0 ? 6 : new Date(year, month, 1).getDay() - 1;
-
   const anzahlTageDesFolgemonats = new Date(year, month + 1, 0).getDay() == 0 ? 0 : 7 - new Date(year, month + 1, 0).getDay();
   const tageImMonat = new Date(year, month + 1, 0).getDate();
   const tageImVormonat = new Date(year, month, 0).getDate();
   const tageInsgesamt = tageImMonat + anzahlTageDesVormonats + anzahlTageDesFolgemonats;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
-  console.log(wochenZahl);
+  console.log(wochenZahl)
   console.log(tageInsgesamt)
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
@@ -225,7 +218,6 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausg
     kalenderwocheTd.textContent = weekNumber;
     weekNumber++;
     tableRow.appendChild(kalenderwocheTd);
-
     for (let tageZaehler = 1; tageZaehler <= 7; tageZaehler++) {
       //fügt immer 7 Zellen in die Zeile hinzu
       const tableCell = document.createElement("td");
@@ -233,8 +225,14 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausg
       tableCell.addEventListener("click", () => {
         initialize(new Date(year, month, datumDerZelle))
       })
+      // //markiert Feiertage visuell im Kalender
+      const vollesZellenDatum = new Date(year, month, datumDerZelle).toLocaleDateString("de-DE", options);
+      
       if (tageZaehler == 6) tableCell.className = "sa"; //markiert Wochendende mit Farbe.
       if (tageZaehler == 7) tableCell.className = "so";
+      if (feiertagArray.some(f => f.datumDeutsch === vollesZellenDatum)) {
+        tableCell.classList.add("feiertag");
+      }
       if (datumDerZelle == heute.getDate() && monat == heute.getMonth()) tableCell.className = "heute"; //markiert den heutigen Tag.
       tableCell.innerText = datumDerZelle;
       if (datumDerZelle == ausgewaehltesDatum.getDate()) tableCell.className = "ausgewaehltesDatum";

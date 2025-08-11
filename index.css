@@ -159,6 +159,15 @@ td:hover {/* Hover-Effekt für die Zellen */
   cursor: pointer;
 }
 
+#kalenderblatt .feiertag {
+  background: repeating-linear-gradient(
+    135deg, /* Winkel der Streifen */ rgba(169, 169, 169, 0) 0px,/* Startfarbe */
+    rgba(169, 169, 169, 0.487) 10px,             /* bis 10px */
+    var(--background-color) 10px, /* zweite Farbe startet */
+    var(--background-color) 23px  /* bis 20px, dann wiederholt sich */
+  );
+}
+
 #kalenderblatt .sa { /* Hintergrundfarbe für Samstag */
   background-color: var(--sa-color);
 }
@@ -199,3 +208,4 @@ td:hover {/* Hover-Effekt für die Zellen */
   text-align: center;
   padding: 20px;
 }
+
