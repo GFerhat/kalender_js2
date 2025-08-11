@@ -207,8 +207,6 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausg
   const tageImVormonat = new Date(year, month, 0).getDate();
   const tageInsgesamt = tageImMonat + anzahlTageDesVormonats + anzahlTageDesFolgemonats;
   const wochenZahl = Math.ceil(tageInsgesamt / 7);
-  console.log(wochenZahl)
-  console.log(tageInsgesamt)
   for (let wochenZaehler = 0; wochenZaehler < wochenZahl; wochenZaehler++) {
     const tableRow = document.createElement("tr");
     tableRow.classList.add("kalendertage");
