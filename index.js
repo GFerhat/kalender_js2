@@ -292,7 +292,6 @@ function implementHtmlText(
     monatName + " " + jahr;
   document.getElementById("kalenderblattH1").innerHTML = ausgewaehltesDatumDeutsch;
   //Historie
-  document.getElementById("datumHistorie").innerHTML = monatName;
   //Infotext
   document.getElementById("datumInfo").innerHTML = ausgewaehltesDatumDeutsch;
   document.getElementById("datumInfo1").innerHTML = ausgewaehltesDatumDeutsch;
@@ -310,27 +309,27 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function showWikiSummary() {
-  const el = document.getElementById("wikiBox");
+  const HTMLHistorieContainer = document.getElementById("historieListe");
   try {
-    el.textContent = "Lade…";
-
+    HTMLHistorieContainer.textContent = "Lade…";
+    console.log("Starte fetch...");
     // 1) Daten von Wikipedia holen (Thema: "Formel_1")
-    const res = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/Formel_1");
+    const res = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/Äthiopien");
+    console.log("Antwort vom Server angekommen:", res);
 
     // 2) Prüfen, ob die Antwort ok ist
     if (!res.ok) throw new Error("HTTP-Status: " + res.status);
 
     // 3) Antwort-Text in JS-Objekt (JSON) umwandeln
     const data = await res.json();
+    console.log("JSON fertig umgewandelt:", data);
 
     // 4) Etwas ausgeben
-    el.innerHTML = `
-      <h3>${data.title}</h3>
-      <p>${data.extract}</p>
-      <p><a href="${data.content_urls.desktop.page}" target="_blank" rel="noopener">Wikipedia öffnen</a></p>`;
+    HTMLHistorieContainer.innerHTML = `
+      <li>${data.extract}</li>`;
   } catch (err) {
     // Fehler sichtbar machen
-    el.textContent = "Fehler beim Laden: " + err.message;
+    HTMLHistorieContainer.textContent = "Fehler beim Laden: " + err.message;
     console.error(err);
   }
 }
