@@ -55,7 +55,6 @@ document.getElementsByClassName("nav-arrowf")[0].addEventListener("click", () =>
 
 function initialize(ausgewaehltesDatum) {
   mainVariables(ausgewaehltesDatum);
-  feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
   const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
   generiereKalenderblatt(jahr, monat, kalenderContainer, weekNumber, ausgewaehltesDatum, feiertagArray);
   implementHtmlText(
@@ -66,6 +65,7 @@ function initialize(ausgewaehltesDatum) {
     ausgewaehltesDatumDeutsch,
     ausgewaehltesDatum
   );
+  ladeHistorie(ausgewaehltesDatum);
 }
 
 function getISOWeek(date) {
@@ -304,32 +304,11 @@ function implementHtmlText(
 }
 initialize(new Date());
 
-document.addEventListener("DOMContentLoaded", () => {
-  stelleWikiDar();
-});
+// document.addEventListener("DOMContentLoaded", () => {
+//   F1HistorieAusDemWeb();
+// });
 
-async function stelleWikiDar () {
-  const HTMLHistorieContainer = document.getElementById("historieListe");
-  try {
-    HTMLHistorieContainer.textContent = "Lade…";
-    console.log("Starte fetch...");
-    // 1) Daten von Wikipedia holen (Thema: "Formel_1")
-    const erwarteteAntwort = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/F1");
-    console.log("Antwort vom Server angekommen:", erwarteteAntwort);
-
-    // 2) Prüfen, ob die Antwort ok ist
-    if (!erwarteteAntwort.ok) throw new Error("HTTP-Status: " + erwarteteAntwort.status);
-
-    // 3) Antwort-Text in JS-Objekt (JSON) umwandeln
-    const data = await erwarteteAntwort.json();
-    console.log("JSON fertig umgewandelt:", data);
-
-    // 4) Etwas ausgeben
-    HTMLHistorieContainer.innerHTML = `
-      <li>${data.extract}</li>`;
-  } catch (err) {
-    // Fehler sichtbar machen
-    HTMLHistorieContainer.textContent = "Fehler beim Laden: " + err.message;
-    console.error(err);
-  }
+async function ladeHistorie (ausgewaehltesDatum) {
+  const list = document.getElementById("historieListe"); 
+  list.innerHTML = "<li>Lade Ereignisse...</li>";
 }
