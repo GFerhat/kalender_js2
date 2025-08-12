@@ -184,8 +184,6 @@ function feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr)
   }
   let kommenderFeiertag = feiertagArray[i].datum;
   kommenderFeiertag = kommenderFeiertag.toLocaleDateString("de-DE", options);
-  console.log(kommenderFeiertag);
-  console.log(feiertagArray[i].datum);
   document.getElementById("nextGesetzlicherFeiertag").innerHTML = 
   "Der nächste gesetzliche Feiertag ist der " + kommenderFeiertag + " und zwar " + feiertagArray[i].feiertagName;
 
@@ -234,7 +232,6 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausg
       if (datumDerZelle == heute.getDate() && monat == heute.getMonth()) tableCell.className = "heute"; //markiert den heutigen Tag.
       tableCell.innerText = datumDerZelle;
       if (datumDerZelle == ausgewaehltesDatum.getDate()) tableCell.className = "ausgewaehltesDatum";
-      console.log(ausgewaehltesDatum.getDate());
       if (wochenZaehler == 0 && tageZaehler <= anzahlTageDesVormonats) {
         //fügt Tage im Vormonat hinzu.
         tableCell.className = "monatPassiv"; //graut den Tag aus
@@ -307,3 +304,33 @@ function implementHtmlText(
   document.getElementById("jahrInfotext").innerHTML = jahr;
 }
 initialize(new Date());
+
+document.addEventListener("DOMContentLoaded", () => {
+  showWikiSummary();
+});
+
+async function showWikiSummary() {
+  const el = document.getElementById("wikiBox");
+  try {
+    el.textContent = "Lade…";
+
+    // 1) Daten von Wikipedia holen (Thema: "Formel_1")
+    const res = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/Formel_1");
+
+    // 2) Prüfen, ob die Antwort ok ist
+    if (!res.ok) throw new Error("HTTP-Status: " + res.status);
+
+    // 3) Antwort-Text in JS-Objekt (JSON) umwandeln
+    const data = await res.json();
+
+    // 4) Etwas ausgeben
+    el.innerHTML = `
+      <h3>${data.title}</h3>
+      <p>${data.extract}</p>
+      <p><a href="${data.content_urls.desktop.page}" target="_blank" rel="noopener">Wikipedia öffnen</a></p>`;
+  } catch (err) {
+    // Fehler sichtbar machen
+    el.textContent = "Fehler beim Laden: " + err.message;
+    console.error(err);
+  }
+}
