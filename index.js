@@ -305,23 +305,23 @@ function implementHtmlText(
 initialize(new Date());
 
 document.addEventListener("DOMContentLoaded", () => {
-  showWikiSummary();
+  stelleWikiDar();
 });
 
-async function showWikiSummary() {
+async function stelleWikiDar () {
   const HTMLHistorieContainer = document.getElementById("historieListe");
   try {
     HTMLHistorieContainer.textContent = "Lade…";
     console.log("Starte fetch...");
     // 1) Daten von Wikipedia holen (Thema: "Formel_1")
-    const res = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/Äthiopien");
-    console.log("Antwort vom Server angekommen:", res);
+    const erwarteteAntwort = await fetch("https://de.wikipedia.org/api/rest_v1/page/summary/F1");
+    console.log("Antwort vom Server angekommen:", erwarteteAntwort);
 
     // 2) Prüfen, ob die Antwort ok ist
-    if (!res.ok) throw new Error("HTTP-Status: " + res.status);
+    if (!erwarteteAntwort.ok) throw new Error("HTTP-Status: " + erwarteteAntwort.status);
 
     // 3) Antwort-Text in JS-Objekt (JSON) umwandeln
-    const data = await res.json();
+    const data = await erwarteteAntwort.json();
     console.log("JSON fertig umgewandelt:", data);
 
     // 4) Etwas ausgeben
