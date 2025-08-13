@@ -65,9 +65,7 @@ function initialize(ausgewaehltesDatum) {
     ausgewaehltesDatumDeutsch,
     ausgewaehltesDatum
   );
-  document.addEventListener("DOMContentLoaded", () => {
   f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch);
-});
 }
 
 function getISOWeek(date) {
@@ -296,6 +294,8 @@ function implementHtmlText(
     monatName + " " + jahr;
   document.getElementById("kalenderblattH1").innerHTML = ausgewaehltesDatumDeutsch;
   //Historie
+    document.getElementById("datumHistorie").innerHTML = " " + ausgewaehltesDatumDeutsch;
+
   //Infotext
   document.getElementById("datumInfo").innerHTML = ausgewaehltesDatumDeutsch;
   document.getElementById("datumInfo1").innerHTML = ausgewaehltesDatumDeutsch;
@@ -310,13 +310,38 @@ initialize(new Date());
 
 async function f1HistorieAusDemWeb (ausgewaehltesDatumDeutsch) {
   const list = document.getElementById("historieListe");
-  list.innerHTML = ""; 
   list.innerHTML = "<li>Lade Ereignisse...</li>";
+  try {
   const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
   const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
   const abrufAusWeb = await fetch (urlDE);
-  if (!abrufAusWeb.ok) throw new Error ("Fehler HTTP " + resizeBy.status);
+  if (!abrufAusWeb.ok) throw new Error ("Fehler HTTP " + abrufAusWeb.status);
+  
   const datenAusWeb = await abrufAusWeb.json();
+  const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
+
+  if (events.length === 0) {
+  list.innerHTML = "<li>Keine Ereignisse.</li>";
+  return;
+  }
   console.log(datenAusWeb);
-  console.log("Events:", datenAusWeb?.events?.length);
+
+  const max = Math.min(3, events.length);
+  let html = "";
+  const genutzterEintrag = new Set(); // gemerkte Zufalls-Indizes
+  while (genutzterEintrag.size < max) {
+    const randomizer = Math.floor(Math.random() * events.length); // 0..len-1
+    if (!genutzterEintrag.has(randomizer)) {
+      genutzterEintrag.add(randomizer);
+      const wikiEvents = events[randomizer];
+      const jahr = wikiEvents?.year ?? "—";
+      const eventsText = wikiEvents?.text ?? "Ohne Beschreibung";
+      html += `<li>${jahr}: ${eventsText}</li>`;
+    }
+  }
+  list.innerHTML = html;
+  } 
+  catch (err) {
+    list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g,"&lt;")}</li>`;
+  }
 }
