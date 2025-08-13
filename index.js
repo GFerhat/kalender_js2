@@ -94,7 +94,7 @@ function mainVariables(ausgewaehltesDatum) {
   tageDesMonats = new Date(jahr, monat + 1, 0).getDate();
   wochentagNum = ausgewaehltesDatum.getDay();
   wochentag = wochentagArray[wochentagNum];
-  ausgewaehltesDatumDeutsch = ausgewaehltesDatum.toLocaleDateString("de-DE",options); //formatiert es korrekt ins Deutsche
+  ausgewaehltesDatumDeutsch = ausgewaehltesDatum.toLocaleDateString("de-DE", options); //formatiert es korrekt ins Deutsche
   weekNumber = getISOWeek(new Date(jahr, monat, 1));
   document.title = "Kalenderblatt " + ausgewaehltesDatumDeutsch;
 }
@@ -175,17 +175,17 @@ function feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr)
     { feiertagName: "Tag der Deutschen Einheit", datum: TDDE, datumDeutsch: formatTDDE },
     { feiertagName: "Weihnachten", datum: weihnachten1, datumDeutsch: formatWeihnachten1 },
     { feiertagName: "Weihnachten", datum: weihnachten2, datumDeutsch: formatWeihnachten2 },
-    { feiertagName: "Neujahr", datum: neujahrNaechstesJahr, datumDeutsch: formatNeujahrNaechstesJahr},
+    { feiertagName: "Neujahr", datum: neujahrNaechstesJahr, datumDeutsch: formatNeujahrNaechstesJahr },
   ];
 
-  let i=0;
+  let i = 0;
   while (ausgewaehltesDatum >= feiertagArray[i].datum) {
     i++;
   }
   let kommenderFeiertag = feiertagArray[i].datum;
   kommenderFeiertag = kommenderFeiertag.toLocaleDateString("de-DE", options);
-  document.getElementById("nextGesetzlicherFeiertag").innerHTML = 
-  "Der nächste gesetzliche Feiertag ist der " + kommenderFeiertag + " und zwar " + feiertagArray[i].feiertagName;
+  document.getElementById("nextGesetzlicherFeiertag").innerHTML =
+    "Der nächste gesetzliche Feiertag ist der " + kommenderFeiertag + " und zwar " + feiertagArray[i].feiertagName;
 
   const gefundenerFeiertag = feiertagArray.find(feiertach => feiertach.datum.getTime() === ausgewaehltesDatum.getTime());
   if (gefundenerFeiertag) {
@@ -223,7 +223,7 @@ function generiereKalenderblatt(year, month, kalenderContainer, weekNumber, ausg
       })
       // //markiert Feiertage visuell im Kalender
       const vollesZellenDatum = new Date(year, month, datumDerZelle).toLocaleDateString("de-DE", options);
-      
+
       if (tageZaehler == 6) tableCell.className = "sa"; //markiert Wochendende mit Farbe.
       if (tageZaehler == 7) tableCell.className = "so";
       if (feiertagArray.some(f => f.datumDeutsch === vollesZellenDatum)) {
@@ -285,16 +285,14 @@ function implementHtmlText(
   tageDesMonats,
   ausgewaehltesDatumDeutsch,
   ausgewaehltesDatum
-)
-
-  {
+) {
   //überschreibt ins HTML Dokument
   //Kalenderblatt
   document.getElementById("kalenderblattHeadJs").innerHTML =
     monatName + " " + jahr;
   document.getElementById("kalenderblattH1").innerHTML = ausgewaehltesDatumDeutsch;
   //Historie
-    document.getElementById("datumHistorie").innerHTML = " " + ausgewaehltesDatumDeutsch;
+  document.getElementById("datumHistorie").innerHTML = " " + ausgewaehltesDatumDeutsch;
 
   //Infotext
   document.getElementById("datumInfo").innerHTML = ausgewaehltesDatumDeutsch;
@@ -308,40 +306,42 @@ function implementHtmlText(
 }
 initialize(new Date());
 
-async function f1HistorieAusDemWeb (ausgewaehltesDatumDeutsch) {
+async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
   const list = document.getElementById("historieListe");
   list.innerHTML = "<li>Lade Ereignisse...</li>";
   try {
-  const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
-  const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
-  const abrufAusWeb = await fetch (urlDE);
-  if (!abrufAusWeb.ok) throw new Error ("Fehler HTTP " + abrufAusWeb.status);
-  
-  const datenAusWeb = await abrufAusWeb.json();
-  const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
+    const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
+    const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
+    const abrufAusWeb = await fetch(urlDE);
+    if (!abrufAusWeb.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
 
-  if (events.length === 0) {
-  list.innerHTML = "<li>Keine Ereignisse.</li>";
-  return;
-  }
-  console.log(datenAusWeb);
+    const datenAusWeb = await abrufAusWeb.json();
+    const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
 
-  const max = Math.min(3, events.length);
-  let html = "";
-  const genutzterEintrag = new Set(); // gemerkte Zufalls-Indizes
-  while (genutzterEintrag.size < max) {
-    const randomizer = Math.floor(Math.random() * events.length); // 0..len-1
-    if (!genutzterEintrag.has(randomizer)) {
-      genutzterEintrag.add(randomizer);
-      const wikiEvents = events[randomizer];
-      const jahr = wikiEvents?.year ?? "—";
-      const eventsText = wikiEvents?.text ?? "Ohne Beschreibung";
-      html += `<li>${jahr}: ${eventsText}</li>`;
+    if (events.length === 0) {
+      list.innerHTML = "<li>Keine Ereignisse.</li>";
+      return;
     }
+    console.log(datenAusWeb);
+
+    const uniqueEintrag = new Set();
+    const max = Math.min(5, events.length);
+    let htmlInhalt = "";
+
+    while (uniqueEintrag.size < max) {
+      let randomEintrag = Math.floor(Math.random() * events.length);
+      let addEvent = events[randomEintrag];
+      uniqueEintrag.add(addEvent);
+      // let addJahr = addEvent?.jahr;
+      console.log(addEvent);
+      // htmlInhalt += `<li>(${addEvent.year}) ${addEvent.text}</li>`
+    }
+    let uniqueEintragArray = new Array(uniqueEintrag);
+    uniqueEintragArray.sort((previous, next) => { previous.year < next.year });
+    
+    list.innerHTML = htmlInhalt;
   }
-  list.innerHTML = html;
-  } 
   catch (err) {
-    list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g,"&lt;")}</li>`;
+    list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
   }
 }
