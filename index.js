@@ -65,7 +65,9 @@ function initialize(ausgewaehltesDatum) {
     ausgewaehltesDatumDeutsch,
     ausgewaehltesDatum
   );
-  ladeHistorie(ausgewaehltesDatum);
+  document.addEventListener("DOMContentLoaded", () => {
+  f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch);
+});
 }
 
 function getISOWeek(date) {
@@ -285,7 +287,9 @@ function implementHtmlText(
   tageDesMonats,
   ausgewaehltesDatumDeutsch,
   ausgewaehltesDatum
-) {
+)
+
+  {
   //überschreibt ins HTML Dokument
   //Kalenderblatt
   document.getElementById("kalenderblattHeadJs").innerHTML =
@@ -304,11 +308,15 @@ function implementHtmlText(
 }
 initialize(new Date());
 
-// document.addEventListener("DOMContentLoaded", () => {
-//   F1HistorieAusDemWeb();
-// });
-
-async function ladeHistorie (ausgewaehltesDatum) {
-  const list = document.getElementById("historieListe"); 
+async function f1HistorieAusDemWeb (ausgewaehltesDatumDeutsch) {
+  const list = document.getElementById("historieListe");
+  list.innerHTML = ""; 
   list.innerHTML = "<li>Lade Ereignisse...</li>";
+  const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
+  const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
+  const abrufAusWeb = await fetch (urlDE);
+  if (!abrufAusWeb.ok) throw new Error ("Fehler HTTP " + resizeBy.status);
+  const datenAusWeb = await abrufAusWeb.json();
+  console.log(datenAusWeb);
+  console.log("Events:", datenAusWeb?.events?.length);
 }
