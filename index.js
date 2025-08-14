@@ -324,18 +324,20 @@ async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
     }
 
     let uniqueEintrag = new Set();
-    let uniqueEintragArray = Array.from(uniqueEintrag);
     const max = Math.min(5, events.length);
     let htmlInhalt = "";
-    let ausgewaehltesEvent;
-    while (uniqueEintragArray.length < max) {
+    while (uniqueEintrag.size < max) {
       let randomEintrag = Math.floor(Math.random() * events.length);
-      uniqueEintragArray.push(events[randomEintrag]);
-      console.log("len" + uniqueEintragArray,length)
-      htmlInhalt += `<li>(${ausgewaehltesEvent.year}) ${ausgewaehltesEvent.text}</li>`
+      uniqueEintrag.add(randomEintrag);
     }
-    
-    // uniqueEintragArray.sort((previous, next) => { previous.year < next.year });
+    let finalEventsArray = [];
+    const uniqueEintragArray = Array.from(uniqueEintrag);
+    uniqueEintragArray.forEach(element => {
+      finalEventsArray.push(events[element]);
+    });
+    //switch a,b for inverted results
+    finalEventsArray.sort((a,b)=>a.year-b.year)
+    console.log(finalEventsArray);
     list.innerHTML = htmlInhalt;
   }
   catch (err) {
