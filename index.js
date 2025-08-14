@@ -322,23 +322,20 @@ async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
       list.innerHTML = "<li>Keine Ereignisse.</li>";
       return;
     }
-    console.log(datenAusWeb);
 
-    const uniqueEintrag = new Set();
+    let uniqueEintrag = new Set();
+    let uniqueEintragArray = Array.from(uniqueEintrag);
     const max = Math.min(5, events.length);
     let htmlInhalt = "";
-
-    while (uniqueEintrag.size < max) {
+    let ausgewaehltesEvent;
+    while (uniqueEintragArray.length < max) {
       let randomEintrag = Math.floor(Math.random() * events.length);
-      let addEvent = events[randomEintrag];
-      uniqueEintrag.add(addEvent);
-      // let addJahr = addEvent?.jahr;
-      console.log(addEvent);
-      // htmlInhalt += `<li>(${addEvent.year}) ${addEvent.text}</li>`
+      uniqueEintragArray.push(events[randomEintrag]);
+      console.log("len" + uniqueEintragArray,length)
+      htmlInhalt += `<li>(${ausgewaehltesEvent.year}) ${ausgewaehltesEvent.text}</li>`
     }
-    let uniqueEintragArray = new Array(uniqueEintrag);
-    uniqueEintragArray.sort((previous, next) => { previous.year < next.year });
     
+    // uniqueEintragArray.sort((previous, next) => { previous.year < next.year });
     list.innerHTML = htmlInhalt;
   }
   catch (err) {
