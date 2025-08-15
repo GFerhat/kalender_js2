@@ -347,6 +347,6 @@ async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
     }
   }
   catch (err) {
-      list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
+      list.innerHTML = `<li>Fehler beim Laden: ${err}</li>`;
     }
 }
