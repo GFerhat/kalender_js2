@@ -322,9 +322,8 @@ async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
       list.innerHTML = "<li>Keine Ereignisse.</li>";
       return;
     }
-
     let uniqueEintrag = new Set();
-    const max = Math.min(5, events.length);
+    const max = Math.min(3, events.length);
     let htmlInhalt = "";
     while (uniqueEintrag.size < max) {
       let randomEintrag = Math.floor(Math.random() * events.length);
@@ -336,11 +335,18 @@ async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
       finalEventsArray.push(events[element]);
     });
     //switch a,b for inverted results
-    finalEventsArray.sort((a,b)=>a.year-b.year)
-    console.log(finalEventsArray);
+    finalEventsArray.sort((a, b) => a.year - b.year)
     list.innerHTML = htmlInhalt;
+    let listenPunkte;
+    const historieContainer = document.getElementById("historieListe");
+    for (let i = 0; i < finalEventsArray.length; i++) {
+      listenPunkte = document.createElement("li");
+      listenPunkte.textContent = finalEventsArray[i].year + " " + finalEventsArray[i].text;
+      listenPunkte.classList.add("historieListenPunkte");
+      historieContainer.appendChild(listenPunkte);
+    }
   }
   catch (err) {
-    list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
-  }
+      list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
+    }
 }
