@@ -52,10 +52,9 @@ document.getElementsByClassName("nav-arrowf")[0].addEventListener("click", () =>
 
 // function myFunction() {}
 // const myFunction2 = () => {}
-
-function initialize(ausgewaehltesDatum) {
-  mainVariables(ausgewaehltesDatum);
-  const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
+  function initialize(ausgewaehltesDatum) {
+    mainVariables(ausgewaehltesDatum);
+    const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
   generiereKalenderblatt(jahr, monat, kalenderContainer, weekNumber, ausgewaehltesDatum, feiertagArray);
   implementHtmlText(
     monatName,
@@ -67,6 +66,56 @@ function initialize(ausgewaehltesDatum) {
   );
   f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch);
 }
+
+//asynchroner Abruf von Ereignissen aus dem Web
+  async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
+    const list = document.getElementById("historieListe");
+    list.innerHTML = "<li>Lade Ereignisse...</li>"; 
+    try {
+      //filtert mir den Tag und Monat aus ausgewaehltesDatumDeutsch heraus
+      const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
+      //mm und dd sind die Variablen für Monat und Tag um auf die richtige URL zuzugreifen 
+      const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
+      const abrufAusWeb = await fetch(urlDE);
+      if (!abrufAusWeb.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
+  
+      const datenAusWeb = await abrufAusWeb.json();//Umwandlung der Daten in JSON
+
+      //macht events in jedem fall zu einem Array
+      const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
+      
+      if (events.length === 0) {
+        list.innerHTML = "<li>Keine Ereignisse.</li>";
+        return;
+      }
+      let uniqueEintrag = new Set();
+      const max = Math.min(5, events.length);
+      let htmlInhalt = "";
+      while (uniqueEintrag.size < max) {
+        let randomEintrag = Math.floor(Math.random() * events.length);
+        uniqueEintrag.add(randomEintrag);
+      }
+      let finalEventsArray = [];
+      const uniqueEintragArray = Array.from(uniqueEintrag);
+      uniqueEintragArray.forEach(element => {
+        finalEventsArray.push(events[element]);
+      });
+      //switch a,b for inverted results
+      finalEventsArray.sort((a, b) => a.year - b.year)
+      list.innerHTML = htmlInhalt;
+      let listenPunkte;
+      const historieContainer = document.getElementById("historieListe");
+      for (let i = 0; i < finalEventsArray.length; i++) {
+        listenPunkte = document.createElement("li");
+        listenPunkte.textContent = finalEventsArray[i].year + " " + finalEventsArray[i].text;
+        listenPunkte.classList.add("historieListenPunkte");
+        historieContainer.appendChild(listenPunkte);
+      }
+    }
+    catch (err) {
+        list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
+      }
+  }
 
 function getISOWeek(date) {
   //Berechnet in welcher Kalenderwoche wir uns befinden.
@@ -305,48 +354,3 @@ function implementHtmlText(
   document.getElementById("jahrInfotext").innerHTML = jahr;
 }
 initialize(new Date());
-
-async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
-  const list = document.getElementById("historieListe");
-  list.innerHTML = "<li>Lade Ereignisse...</li>";
-  try {
-    const [dd, mm] = ausgewaehltesDatumDeutsch.split(".");
-    const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
-    const abrufAusWeb = await fetch(urlDE);
-    if (!abrufAusWeb.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
-
-    const datenAusWeb = await abrufAusWeb.json();
-    const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
-
-    if (events.length === 0) {
-      list.innerHTML = "<li>Keine Ereignisse.</li>";
-      return;
-    }
-    let uniqueEintrag = new Set();
-    const max = Math.min(3, events.length);
-    let htmlInhalt = "";
-    while (uniqueEintrag.size < max) {
-      let randomEintrag = Math.floor(Math.random() * events.length);
-      uniqueEintrag.add(randomEintrag);
-    }
-    let finalEventsArray = [];
-    const uniqueEintragArray = Array.from(uniqueEintrag);
-    uniqueEintragArray.forEach(element => {
-      finalEventsArray.push(events[element]);
-    });
-    //switch a,b for inverted results
-    finalEventsArray.sort((a, b) => a.year - b.year)
-    list.innerHTML = htmlInhalt;
-    let listenPunkte;
-    const historieContainer = document.getElementById("historieListe");
-    for (let i = 0; i < finalEventsArray.length; i++) {
-      listenPunkte = document.createElement("li");
-      listenPunkte.textContent = finalEventsArray[i].year + " " + finalEventsArray[i].text;
-      listenPunkte.classList.add("historieListenPunkte");
-      historieContainer.appendChild(listenPunkte);
-    }
-  }
-  catch (err) {
-      list.innerHTML = `<li>Fehler beim Laden: ${String(err).replace(/</g, "&lt;")}</li>`;
-    }
-}
