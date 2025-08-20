@@ -76,14 +76,14 @@ async function f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum) {
 
   const [dd, mm, yy] = ausgewaehltesDatumDeutsch.split(".");
   try {
-    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1/${yy}.json?limit=1000`);
+    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1?limit=99`);
     if (!alleRennenRaw.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
     const alleRennenJson = await alleRennenRaw.json();
     console.log("alle Rennen Json", alleRennenJson);
     const alleRennenList = alleRennenJson.MRData.RaceTable.Races;
-    let monthlyRennenList = alleRennenList.filter((value) => {
-      const mmFromValue = value.date.split("-")[1];
-      return mmFromValue == mm;
+    let monthlyRennenList = alleRennenList.filter((rennen) => {
+      const mmFromRennen = rennen.date.split("-")[1];
+      return mmFromRennen == mm;
     })
 
     console.log(monthlyRennenList);
