@@ -52,9 +52,9 @@ document.getElementsByClassName("nav-arrowf")[0].addEventListener("click", () =>
 
 // function myFunction() {}
 // const myFunction2 = () => {}
-  function initialize(ausgewaehltesDatum) {
-    mainVariables(ausgewaehltesDatum);
-    const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
+function initialize(ausgewaehltesDatum) {
+  mainVariables(ausgewaehltesDatum);
+  const feiertagArray = feiertagFestlegung(ausgewaehltesDatum, ausgewaehltesDatumDeutsch, jahr);
   generiereKalenderblatt(jahr, monat, kalenderContainer, weekNumber, ausgewaehltesDatum, feiertagArray);
   implementHtmlText(
     monatName,
@@ -64,17 +64,42 @@ document.getElementsByClassName("nav-arrowf")[0].addEventListener("click", () =>
     ausgewaehltesDatumDeutsch,
     ausgewaehltesDatum
   );
-  f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch);
+  f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum);
+  //f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch);
 }
 
-async function f1RaceHistory(ausgewaehltesDatum) {
-  const containerHistorie = document.getElementById("historieListe");
-  const alleRennen = await fetch("https://api.jolpi.ca/ergast/f1");
-  const alleRennenJson = await alleRennen.json();
-  console.log(alleRennenJson);
+async function f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum) {
+  const list = document.getElementById("historieListe");
+  list.innerHTML = "<li>Lade Ereignisse...</li>";
+
+  // aaa.split("-")[1];
+
+  const [dd, mm, yy] = ausgewaehltesDatumDeutsch.split(".");
+  try {
+    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1/${yy}.json?limit=1000`);
+    if (!alleRennenRaw.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
+    const alleRennenJson = await alleRennenRaw.json();
+    console.log("alle Rennen Json", alleRennenJson);
+    const alleRennenList = alleRennenJson.MRData.RaceTable.Races;
+    let monthlyRennenList = alleRennenList.filter((value) => {
+      const mmFromValue = value.date.split("-")[1];
+      return mmFromValue == mm;
+    })
+
+    console.log(monthlyRennenList);
+    console.log(monthlyRennenList.length);
+
+    if (monthlyRennenList.length === 0) {
+      list.innerHTML = "<li>Keine Ereignisse</li>";
+    }
+    list.innerHTML = "";
+
+  }
+  catch (err) {
+    list.innerHTML = `<li>Fehler beim Laden: ${err}</li>`;
+  }
 }
 
-f1RaceHistory(1);
 
 // //asynchroner Abruf von Ereignissen aus dem Web
 //   async function f1HistorieAusDemWeb(ausgewaehltesDatumDeutsch) {
@@ -87,12 +112,12 @@ f1RaceHistory(1);
 //       const urlDE = `https://de.wikipedia.org/api/rest_v1/feed/onthisday/events/${mm}/${dd}`;
 //       const abrufAusWeb = await fetch(urlDE);
 //       if (!abrufAusWeb.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
-  
+
 //       const datenAusWeb = await abrufAusWeb.json();//Umwandlung der Daten in JSON
 
 //       //macht events in jedem fall zu einem Array
 //       const events = Array.isArray(datenAusWeb.events) ? datenAusWeb.events : [];
-      
+
 //       if (events.length === 0) {
 //         list.innerHTML = "<li>Keine Ereignisse.</li>";
 //         return;
@@ -326,11 +351,11 @@ function changeMonth(direction) {
 function getMonatwoche(tag) {
   if (tag <= 7) {
     return 1;
-  } else if (tag < 14) {
+  } else if (tag <= 14) {
     return 2;
-  } else if (tag < 21) {
+  } else if (tag <= 21) {
     return 3;
-  } else if (tag < 28) {
+  } else if (tag <= 28) {
     return 4;
   }
   return 5;
