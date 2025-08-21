@@ -72,35 +72,50 @@ async function f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum) {
   const list = document.getElementById("historieListe");
   list.innerHTML = "<li>Lade Ereignisse...</li>";
 
-  // aaa.split("-")[1];
-
   const [dd, mm, yy] = ausgewaehltesDatumDeutsch.split(".");
+  let alleRennenList = [];
+  let offset = 0;
+  const limit = 100;
+  let hasMoreData = true;
+
   try {
-    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1?limit=100`);
-    if (!alleRennenRaw.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
-    const alleRennenJson = await alleRennenRaw.json();
-    const alleRennenList = alleRennenJson.MRData.RaceTable.Races;
-    let monthlyRennenList = alleRennenList.filter((rennen) => {
-      const mmFromRennen = rennen.date.split("-")[1];
-      return mmFromRennen == mm;
-    })
+    while (hasMoreData) {
+      const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1/races.json?limit=${limit}&offset=${offset}`);
+      if (!alleRennenRaw.ok) throw new Error("Fehler HTTP " + alleRennenRaw.status);
+      const alleRennenJson = await alleRennenRaw.json();
+      const races = alleRennenJson.MRData.RaceTable.Races;
+      const total = parseInt(alleRennenJson.MRData.total);
 
-    console.log(monthlyRennenList);
+      alleRennenList = alleRennenList.concat(races);
 
-    if (monthlyRennenList.length === 0) {
-      list.innerHTML = "<li>Keine Ereignisse</li>";
+      if (alleRennenList.length >= total) {
+        hasMoreData = false;
+      } else {
+        offset += limit;
+      }
     }
+
+    let monthlyRennenList = alleRennenList.filter((rennen) => {
+  // Das Renn-Datum hat das Format "YYYY-MM-DD"
+  const [yyFromRennen, mmFromRennen, ddFromRennen] = rennen.date.split("-");
+
+  // Die Funktion gibt nur 'true' zurück, wenn sowohl Monat als auch Tag übereinstimmen
+  return mmFromRennen == mm && ddFromRennen == dd;
+}); 
     list.innerHTML = "";
     let listenPunkte
     for (let i = monthlyRennenList.length-1; i >= 0; i--) {
         listenPunkte = document.createElement("li");
-        listenPunkte.textContent =  `${monthlyRennenList[i].season} fand das ${monthlyRennenList[i].raceName} statt.`
+        listenPunkte.textContent = `${monthlyRennenList[i].season} fand das ${monthlyRennenList[i].raceName} statt.`
         listenPunkte.classList.add("historieListenPunkte");
         list.appendChild(listenPunkte);
       }
+    console.log(monthlyRennenList)
+      if (monthlyRennenList.length === 0) {
+      list.innerHTML = "<li>An diesem Datum fand kein Grand Prix statt</li>";
+    }
 
-  }
-  catch (err) {
+  } catch (err) {
     list.innerHTML = `<li>Fehler beim Laden: ${err}</li>`;
   }
 }
@@ -374,13 +389,14 @@ function implementHtmlText(
   ausgewaehltesDatumDeutsch,
   ausgewaehltesDatum
 ) {
+  let [tagDeutsch, monatDeutsch] = ausgewaehltesDatumDeutsch.split('.');
   //überschreibt ins HTML Dokument
   //Kalenderblatt
   document.getElementById("kalenderblattHeadJs").innerHTML =
     monatName + " " + jahr;
   document.getElementById("kalenderblattH1").innerHTML = ausgewaehltesDatumDeutsch;
   //Historie
-  document.getElementById("datumHistorie").innerHTML = " " + monatName;
+  document.getElementById("datumHistorie").innerHTML = " " + `${tagDeutsch}.${monatDeutsch}.XXXX`;
 
   //Infotext
   document.getElementById("datumInfo").innerHTML = ausgewaehltesDatumDeutsch;
