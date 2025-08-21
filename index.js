@@ -76,10 +76,9 @@ async function f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum) {
 
   const [dd, mm, yy] = ausgewaehltesDatumDeutsch.split(".");
   try {
-    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1?limit=99`);
+    const alleRennenRaw = await fetch(`https://api.jolpi.ca/ergast/f1?limit=100`);
     if (!alleRennenRaw.ok) throw new Error("Fehler HTTP " + abrufAusWeb.status);
     const alleRennenJson = await alleRennenRaw.json();
-    console.log("alle Rennen Json", alleRennenJson);
     const alleRennenList = alleRennenJson.MRData.RaceTable.Races;
     let monthlyRennenList = alleRennenList.filter((rennen) => {
       const mmFromRennen = rennen.date.split("-")[1];
@@ -87,12 +86,18 @@ async function f1RaceHistory(ausgewaehltesDatumDeutsch, ausgewaehltesDatum) {
     })
 
     console.log(monthlyRennenList);
-    console.log(monthlyRennenList.length);
 
     if (monthlyRennenList.length === 0) {
       list.innerHTML = "<li>Keine Ereignisse</li>";
     }
     list.innerHTML = "";
+    let listenPunkte
+    for (let i = monthlyRennenList.length-1; i >= 0; i--) {
+        listenPunkte = document.createElement("li");
+        listenPunkte.textContent =  `${monthlyRennenList[i].season} fand das ${monthlyRennenList[i].raceName} statt.`
+        listenPunkte.classList.add("historieListenPunkte");
+        list.appendChild(listenPunkte);
+      }
 
   }
   catch (err) {
@@ -375,7 +380,7 @@ function implementHtmlText(
     monatName + " " + jahr;
   document.getElementById("kalenderblattH1").innerHTML = ausgewaehltesDatumDeutsch;
   //Historie
-  document.getElementById("datumHistorie").innerHTML = " " + ausgewaehltesDatumDeutsch;
+  document.getElementById("datumHistorie").innerHTML = " " + monatName;
 
   //Infotext
   document.getElementById("datumInfo").innerHTML = ausgewaehltesDatumDeutsch;
